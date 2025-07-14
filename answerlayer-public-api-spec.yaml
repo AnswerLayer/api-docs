@@ -4,7 +4,7 @@ info:
   description: |
     ## Conversational Analytics Platform
     
-    AnswerLayer enables SaaS companies to embed conversational analytics directly into their existing product dashboards. 
+    AnswerLayer enables organizations to embed conversational analytics directly into their existing product dashboards. 
     This API allows you to programmatically manage your clients and their users, while providing natural language querying 
     capabilities over your centralized data warehouse.
     
@@ -24,7 +24,7 @@ info:
     
     ### Use Case Example
     
-    A company like Anthropic could use AnswerLayer to:
+    A company like Stripe could use AnswerLayer to:
     1. Connect their usage analytics database containing all client data
     2. Create client records for each of their customers  
     3. Embed conversational analytics into their customer dashboard
@@ -221,97 +221,6 @@ paths:
       responses:
         '204':
           description: Client deleted successfully
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-
-  # Admin Endpoints - Database Connection Management
-  /admin/connections:
-    post:
-      summary: Create database connection
-      description: Create a new database connection for your organization
-      operationId: createConnection
-      tags:
-        - Admin - Database Connections
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateConnectionRequest'
-            examples:
-              postgres_connection:
-                summary: PostgreSQL connection
-                value:
-                  name: "Production Database"
-                  type: "postgresql"
-                  config:
-                    host: "db.company.com"
-                    port: 5432
-                    database: "analytics"
-                    username: "readonly_user"
-                    password: "secure_password"
-              snowflake_connection:
-                summary: Snowflake connection
-                value:
-                  name: "Data Warehouse"
-                  type: "snowflake"
-                  config:
-                    account: "company.snowflakecomputing.com"
-                    warehouse: "ANALYTICS_WH"
-                    database: "ANALYTICS_DB"
-                    username: "analytics_user"
-                    password: "secure_password"
-      responses:
-        '201':
-          description: Connection created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Connection'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    
-    get:
-      summary: List database connections
-      description: Retrieve all database connections for your organization
-      operationId: listConnections
-      tags:
-        - Admin - Database Connections
-      responses:
-        '200':
-          description: List of connections
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnectionList'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /admin/connections/{connection_id}:
-    get:
-      summary: Get connection details
-      description: Retrieve detailed information about a database connection
-      operationId: getConnection
-      tags:
-        - Admin - Database Connections
-      parameters:
-        - name: connection_id
-          in: path
-          required: true
-          description: Unique identifier for the connection
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Connection details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Connection'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -1260,11 +1169,11 @@ components:
             message:
               type: string
               description: Human-readable error message
-              example: "Invalid application_id provided"
+              example: "Invalid client_id provided"
             details:
               type: string
               description: Additional error details
-              example: "Application with ID 'abc123' not found"
+              example: "Client with ID 'abc123' not found"
             request_id:
               type: string
               description: Unique request identifier for debugging
@@ -1281,7 +1190,7 @@ components:
             error:
               code: "VALIDATION_ERROR"
               message: "Invalid input parameters"
-              details: "The 'application_id' field is required"
+              details: "The 'client_id' field is required"
 
     Unauthorized:
       description: Unauthorized - Invalid or missing API key
@@ -1329,7 +1238,7 @@ components:
             error:
               code: "CONFLICT"
               message: "Resource already exists"
-              details: "An application with this domain already exists"
+              details: "A client with this domain already exists"
 
     RateLimitExceeded:
       description: Rate limit exceeded
@@ -1344,12 +1253,10 @@ components:
               details: "You have exceeded the rate limit. Please try again later"
 
 tags:
-  - name: Admin - Application Management
-    description: Operations for managing applications
-  - name: Admin - Database Connections
-    description: Operations for managing database connections
+  - name: Admin - Client Management
+    description: Operations for managing clients
   - name: Admin - User Management
-    description: Operations for managing application users
+    description: Operations for managing client users
   - name: Questions & Answers
     description: Natural language question processing and answer generation
   - name: Chain Management
