@@ -4,23 +4,33 @@ info:
   description: |
     ## Conversational Analytics Platform
     
-    AnswerLayer enables organizations to build conversational interfaces for their users'data analytics needs. 
-    This API allows you to programmatically manage clients, users, and facilitate natural language querying of 
-    users' data within your product.
+    AnswerLayer enables SaaS companies to embed conversational analytics directly into their existing product dashboards. 
+    This API allows you to programmatically manage your clients and their users, while providing natural language querying 
+    capabilities over your centralized data warehouse.
     
     ### Architecture
     
-    The API follows a hierarchical structure:
+    The API follows a hierarchical structure designed for embedding analytics into your product:
     
     ```
-    Your Organization
+    Your Organization (API Customer)
+    ├── Database Connections (Your Data Warehouse)
     ├── Clients (Your Customers)
-    │   ├── Users (End Users)
-    │   ├── Questions & Conversations
+    │   ├── Users (Your Customers' Users)
+    │   ├── Questions & Conversations (Auto-scoped to client data)
     │   └── Charts & Visualizations
-    ├── Database Connections (Data Sources)
     └── API Keys & Authentication
     ```
+    
+    ### Use Case Example
+    
+    A company like Anthropic could use AnswerLayer to:
+    1. Connect their usage analytics database containing all client data
+    2. Create client records for each of their customers  
+    3. Embed conversational analytics into their customer dashboard
+    4. Allow each client to ask questions about their own usage data
+    
+    AnswerLayer automatically ensures data isolation - each client only sees their own data.
     
     ### Authentication
     
@@ -38,8 +48,8 @@ info:
     {
       "error": {
         "code": "VALIDATION_ERROR",
-        "message": "Invalid application_id provided",
-        "details": "Application with ID 'abc123' not found"
+        "message": "Invalid client_id provided",
+        "details": "Client with ID 'abc123' not found"
       }
     }
     ```
@@ -60,23 +70,23 @@ security:
   - ApiKeyAuth: []
 
 paths:
-  # Admin Endpoints - Application Management
-  /admin/applications:
+  # Admin Endpoints - Client Management
+  /admin/clients:
     post:
-      summary: Create new application
-      description: Create a new application that can access your AnswerLayer analytics
-      operationId: createApplication
+      summary: Create new client
+      description: Create a new client organization that can access analytics through your product
+      operationId: createClient
       tags:
-        - Admin - Application Management
+        - Admin - Client Management
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateApplicationRequest'
-            examples:
-              basic_application:
-                summary: Basic application creation
+                          $ref: '#/components/schemas/CreateClientRequest'
+          examples:
+            basic_client:
+              summary: Basic client creation
                 value:
                   name: "Customer Analytics Dashboard"
                   description: "Analytics dashboard for customer insights"
@@ -86,11 +96,11 @@ paths:
                     features: ["analytics", "reporting", "charts"]
       responses:
         '201':
-          description: Application created successfully
+          description: Client created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/Client'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -99,11 +109,11 @@ paths:
           $ref: '#/components/responses/Conflict'
     
     get:
-      summary: List all applications
-      description: Retrieve a paginated list of all applications in your organization
-      operationId: listApplications
+      summary: List all clients
+      description: Retrieve a paginated list of all clients in your organization
+      operationId: listClients
       tags:
-        - Admin - Application Management
+        - Admin - Client Management
       parameters:
         - name: page
           in: query
@@ -120,61 +130,60 @@ paths:
           schema:
             type: integer
             default: 20
-            minimum: 1
             maximum: 100
         - name: search
           in: query
-          description: Search applications by name or domain
+          description: Search clients by name or domain
           required: false
           schema:
             type: string
       responses:
         '200':
-          description: List of applications
+          description: List of clients
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationList'
+                $ref: '#/components/schemas/ClientList'
         '401':
           $ref: '#/components/responses/Unauthorized'
   
-  /admin/applications/{application_id}:
+  /admin/clients/{client_id}:
     get:
-      summary: Get application details
-      description: Retrieve detailed information about a specific application
-      operationId: getApplication
+      summary: Get client details
+      description: Retrieve detailed information about a specific client
+      operationId: getClient
       tags:
-        - Admin - Application Management
+        - Admin - Client Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: path
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
       responses:
         '200':
-          description: Application details
+          description: Client details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/Client'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     
     put:
-      summary: Update application
-      description: Update an existing application's information
-      operationId: updateApplication
+      summary: Update client
+      description: Update an existing client's information
+      operationId: updateClient
       tags:
-        - Admin - Application Management
+        - Admin - Client Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: path
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
       requestBody:
@@ -182,14 +191,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateApplicationRequest'
+              $ref: '#/components/schemas/UpdateClientRequest'
       responses:
         '200':
-          description: Application updated successfully
+          description: Client updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/Client'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -198,21 +207,21 @@ paths:
           $ref: '#/components/responses/NotFound'
     
     delete:
-      summary: Delete application
-      description: Delete an application and all associated data
-      operationId: deleteApplication
+      summary: Delete client
+      description: Delete a client and all associated data
+      operationId: deleteClient
       tags:
-        - Admin - Application Management
+        - Admin - Client Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: path
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
       responses:
         '204':
-          description: Application deleted successfully
+          description: Client deleted successfully
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -310,18 +319,18 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Admin Endpoints - User Management
-  /admin/applications/{application_id}/users:
+  /admin/clients/{client_id}/users:
     post:
-      summary: Create application user
-      description: Create a new user for a specific application
-      operationId: createApplicationUser
+      summary: Create client user
+      description: Create a new user for a specific client organization
+      operationId: createClientUser
       tags:
         - Admin - User Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: path
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
       requestBody:
@@ -329,14 +338,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateApplicationUserRequest'
+              $ref: '#/components/schemas/CreateClientUserRequest'
       responses:
         '201':
-          description: Application user created successfully
+          description: Client user created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationUser'
+                $ref: '#/components/schemas/ClientUser'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -345,16 +354,16 @@ paths:
           $ref: '#/components/responses/NotFound'
     
     get:
-      summary: List application users
-      description: Retrieve all users for a specific application
-      operationId: listApplicationUsers
+      summary: List client users
+      description: Retrieve all users for a specific client organization
+      operationId: listClientUsers
       tags:
         - Admin - User Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: path
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
         - name: page
@@ -373,28 +382,28 @@ paths:
             default: 20
       responses:
         '200':
-          description: List of application users
+          description: List of client users
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationUserList'
+                $ref: '#/components/schemas/ClientUserList'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /admin/applications/{application_id}/users/{user_id}:
+  /admin/clients/{client_id}/users/{user_id}:
     get:
-      summary: Get application user details
-      description: Retrieve detailed information about a specific application user
-      operationId: getApplicationUser
+      summary: Get client user details
+      description: Retrieve detailed information about a specific client user
+      operationId: getClientUser
       tags:
         - Admin - User Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: path
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
         - name: user_id
@@ -405,27 +414,27 @@ paths:
             type: string
       responses:
         '200':
-          description: Application user details
+          description: Client user details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationUser'
+                $ref: '#/components/schemas/ClientUser'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     
     put:
-      summary: Update application user
-      description: Update an existing application user's information
-      operationId: updateApplicationUser
+      summary: Update client user
+      description: Update an existing client user's information
+      operationId: updateClientUser
       tags:
         - Admin - User Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: path
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
         - name: user_id
@@ -439,14 +448,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateApplicationUserRequest'
+              $ref: '#/components/schemas/UpdateClientUserRequest'
       responses:
         '200':
-          description: Application user updated successfully
+          description: Client user updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationUser'
+                $ref: '#/components/schemas/ClientUser'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -455,16 +464,16 @@ paths:
           $ref: '#/components/responses/NotFound'
     
     delete:
-      summary: Delete application user
-      description: Delete an application user and all associated data
-      operationId: deleteApplicationUser
+      summary: Delete client user
+      description: Delete a client user and all associated data
+      operationId: deleteClientUser
       tags:
         - Admin - User Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: path
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
         - name: user_id
@@ -475,7 +484,7 @@ paths:
             type: string
       responses:
         '204':
-          description: Application user deleted successfully
+          description: Client user deleted successfully
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -500,7 +509,7 @@ paths:
                 summary: Start new conversation
                 value:
                   question: "What were our top 5 products by revenue last quarter?"
-                  application_id: "app_123"
+                  client_id: "client_123"
                   user_id: "user_456"
                   context:
                     timezone: "America/New_York"
@@ -511,7 +520,7 @@ paths:
                 summary: Follow-up question
                 value:
                   question: "Show me the monthly breakdown for those products"
-                  application_id: "app_123"
+                  client_id: "client_123"
                   user_id: "user_456"
                   chain_id: "chain_789"
                   context:
@@ -587,7 +596,6 @@ paths:
           schema:
             type: integer
             default: 5
-            minimum: 1
             maximum: 10
       responses:
         '200':
@@ -604,16 +612,16 @@ paths:
   # Chain Management
   /chains:
     get:
-      summary: List chains for application user
-      description: Retrieve a list of conversation chains for a specific application user
+      summary: List chains for client user
+      description: Retrieve a list of conversation chains for a specific client user
       operationId: listChains
       tags:
         - Chain Management
       parameters:
-        - name: application_id
+        - name: client_id
           in: query
           required: true
-          description: Unique identifier for the application
+          description: Unique identifier for the client
           schema:
             type: string
         - name: user_id
@@ -629,6 +637,7 @@ paths:
           schema:
             type: integer
             default: 1
+            minimum: 1
         - name: limit
           in: query
           description: Number of items per page
@@ -636,6 +645,8 @@ paths:
           schema:
             type: integer
             default: 20
+            minimum: 1
+            maximum: 100
       responses:
         '200':
           description: List of chains
@@ -723,8 +734,8 @@ components:
       description: API key authentication. Include your API key in the Authorization header as a Bearer token.
 
   schemas:
-    # Application Management Schemas
-    CreateApplicationRequest:
+    # Client Management Schemas
+    CreateClientRequest:
       type: object
       required:
         - name
@@ -732,90 +743,86 @@ components:
       properties:
         name:
           type: string
-          description: Display name for the application
+          description: Display name for the client organization
           example: "Customer Analytics Dashboard"
         description:
           type: string
-          description: Optional description of the application
+          description: Optional description of the client organization
           example: "Analytics dashboard for customer insights"
         domain:
           type: string
-          description: Primary domain for the application
+          description: Primary domain for the client organization
           example: "dashboard.acme.com"
         settings:
           type: object
-          description: Application-specific configuration settings
+          description: Client-specific configuration settings
           properties:
             max_users:
               type: integer
-              description: Maximum number of users allowed
+              description: Maximum number of users allowed for this client
               example: 100
             features:
               type: array
               items:
                 type: string
-              description: List of enabled features
+              description: List of enabled features for this client
               example: ["analytics", "reporting", "charts"]
-            data_retention_days:
-              type: integer
-              description: Number of days to retain data
-              example: 365
 
-    UpdateApplicationRequest:
+    UpdateClientRequest:
       type: object
       properties:
         name:
           type: string
-          description: Display name for the application
+          description: Display name for the client organization
         description:
           type: string
-          description: Optional description of the application
+          description: Optional description of the client organization
         settings:
           type: object
-          description: Application-specific configuration settings
+          description: Client-specific configuration settings
 
-    Application:
+    Client:
       type: object
       properties:
         id:
           type: string
-          description: Unique identifier for the application
-          example: "app_123"
+          description: Unique identifier for the client organization
+          example: "client_123"
         name:
           type: string
-          description: Display name for the application
+          description: Display name for the client organization
           example: "Customer Analytics Dashboard"
         description:
           type: string
-          description: Optional description of the application
+          description: Optional description of the client organization
           example: "Analytics dashboard for customer insights"
         domain:
           type: string
-          description: Primary domain for the application
+          description: Primary domain for the client organization
           example: "dashboard.acme.com"
         settings:
           type: object
-          description: Application-specific configuration settings
+          description: Client-specific configuration settings
         created_at:
           type: string
           format: date-time
-          description: When the application was created
+          description: When the client organization was created
         updated_at:
           type: string
           format: date-time
-          description: When the application was last updated
+          description: When the client organization was last updated
         user_count:
           type: integer
           description: Current number of users
           example: 25
 
-    ApplicationList:
+    ClientList:
       type: object
       properties:
-        applications:
+        clients:
           type: array
           items:
-            $ref: '#/components/schemas/Application'
+            $ref: '#/components/schemas/Client'
         pagination:
           $ref: '#/components/schemas/Pagination'
 
@@ -884,7 +891,7 @@ components:
             $ref: '#/components/schemas/Connection'
 
     # User Management Schemas
-    CreateApplicationUserRequest:
+    CreateClientUserRequest:
       type: object
       required:
         - email
@@ -910,7 +917,7 @@ components:
               type: string
               example: "Senior Analyst"
 
-    UpdateApplicationUserRequest:
+    UpdateClientUserRequest:
       type: object
       properties:
         name:
@@ -920,17 +927,17 @@ components:
           type: object
           description: Additional user metadata
 
-    ApplicationUser:
+    ClientUser:
       type: object
       properties:
         id:
           type: string
           description: Unique identifier for the user
           example: "user_456"
-        application_id:
+        client_id:
           type: string
-          description: ID of the application this user belongs to
-          example: "app_123"
+          description: ID of the client organization this user belongs to
+          example: "client_123"
         email:
           type: string
           format: email
@@ -956,13 +963,13 @@ components:
           format: date-time
           description: When the user was last active
 
-    ApplicationUserList:
+    ClientUserList:
       type: object
       properties:
         users:
           type: array
           items:
-            $ref: '#/components/schemas/ApplicationUser'
+            $ref: '#/components/schemas/ClientUser'
         pagination:
           $ref: '#/components/schemas/Pagination'
 
@@ -971,17 +978,17 @@ components:
       type: object
       required:
         - question
-        - application_id
+        - client_id
         - user_id
       properties:
         question:
           type: string
           description: Natural language question to ask
           example: "What were our top 5 products by revenue last quarter?"
-        application_id:
+        client_id:
           type: string
-          description: ID of the application asking the question
-          example: "app_123"
+          description: ID of the client organization asking the question
+          example: "client_123"
         user_id:
           type: string
           description: ID of the user asking the question
@@ -1068,10 +1075,10 @@ components:
           type: string
           format: date-time
           description: When the answer was created
-        application_id:
+        client_id:
           type: string
-          description: ID of the application
-          example: "app_123"
+          description: ID of the client organization
+          example: "client_123"
         user_id:
           type: string
           description: ID of the user who asked the question
@@ -1167,10 +1174,10 @@ components:
           type: string
           description: Unique identifier for the chain
           example: "chain_789"
-        application_id:
+        client_id:
           type: string
-          description: ID of the application
-          example: "app_123"
+          description: ID of the client organization
+          example: "client_123"
         user_id:
           type: string
           description: ID of the user who started the chain
