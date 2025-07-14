@@ -16,19 +16,25 @@ info:
     Your Organization (API Customer)
     ├── Database Connections (Your Data Warehouse)
     ├── Clients (Your Customers)
-    │   ├── Users (Your Customers' Users)
+    │   ├── Users (Individuals using your product)
     │   ├── Questions & Conversations (Auto-scoped to client data)
     │   └── Charts & Visualizations
     └── API Keys & Authentication
     ```
+
+    ### Privacy
+
+    AnswerLayer is PII-aware and will never store or access any PII data. 
+    It intelligently detects which columns contian sensitive data and protects them as the source, never allowing sensitive data to leave your systems
+
     
     ### Use Case Example
     
-    A company like Stripe could use AnswerLayer to:
-    1. Connect their usage analytics database containing all client data
-    2. Create client records for each of their customers  
-    3. Embed conversational analytics into their customer dashboard
-    4. Allow each client to ask questions about their own usage data
+    Use AnswerLayer to:
+    1. Connect a usage analytics database containing all client data
+    2. Register client records for each customer  
+    3. Embed conversational analytics into your customer dashboard
+    4. Allow each customer to ask questions about their own usage data
     
     AnswerLayer automatically ensures data isolation - each client only sees their own data.
     
@@ -733,70 +739,6 @@ components:
             $ref: '#/components/schemas/Client'
         pagination:
           $ref: '#/components/schemas/Pagination'
-
-    # Database Connection Schemas
-    CreateConnectionRequest:
-      type: object
-      required:
-        - name
-        - type
-        - config
-      properties:
-        name:
-          type: string
-          description: Display name for the connection
-          example: "Production Database"
-        type:
-          type: string
-          enum: ["postgresql", "mysql", "snowflake", "bigquery", "redshift"]
-          description: Type of database
-          example: "postgresql"
-        config:
-          type: object
-          description: Connection configuration (varies by database type)
-          example:
-            host: "db.company.com"
-            port: 5432
-            database: "analytics"
-            username: "readonly_user"
-            password: "secure_password"
-
-    Connection:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the connection
-          example: "conn_123"
-        name:
-          type: string
-          description: Display name for the connection
-          example: "Production Database"
-        type:
-          type: string
-          description: Type of database
-          example: "postgresql"
-        status:
-          type: string
-          enum: ["active", "inactive", "error"]
-          description: Connection status
-          example: "active"
-        created_at:
-          type: string
-          format: date-time
-          description: When the connection was created
-        updated_at:
-          type: string
-          format: date-time
-          description: When the connection was last updated
-
-    ConnectionList:
-      type: object
-      properties:
-        connections:
-          type: array
-          items:
-            $ref: '#/components/schemas/Connection'
 
     # User Management Schemas
     CreateClientUserRequest:
