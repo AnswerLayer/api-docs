@@ -38,7 +38,7 @@ export default function handler(req, res) {
         }
         
         .header {
-            background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 50%, var(--navy-700) 100%);
+            background: linear-gradient(135deg, var(--navy-800) 0%, var(--navy-700) 50%, var(--navy-600) 100%);
             color: white;
             padding: 3rem 0;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -234,7 +234,7 @@ export default function handler(req, res) {
             <nav class="nav-links">
                 <a href="https://getanswerlayer.com" class="nav-link">Home</a>
                 <a href="https://getanswerlayer.com/pricing" class="nav-link">Pricing</a>
-                <a href="https://getanswerlayer.com/app" class="cta-button">Get Started</a>
+                <a href="https://getanswerlayer.com/sign-up" class="cta-button">Get Started</a>
             </nav>
         </div>
     </div>
@@ -299,9 +299,9 @@ export default function handler(req, res) {
                     },
                     typography: {
                         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                        fontSize: '14px',
+                        fontSize: '15px',
                         lineHeight: '1.6',
-                        fontWeightRegular: '400',
+                        fontWeightRegular: '500',
                         fontWeightBold: '600',
                         code: {
                             fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
@@ -324,7 +324,7 @@ export default function handler(req, res) {
                         width: '320px',
                         backgroundColor: '#f8fafc',
                         borderColor: '#e2e8f0',
-                        textColor: '#475569'
+                        textColor: '#1e293b'
                     },
                     rightPanel: {
                         backgroundColor: '#1e293b',
