@@ -1,210 +1,151 @@
-# AnswerLayer Public API Documentation
+# AnswerLayer Public API
 
-This repository contains the public API documentation for AnswerLayer's Conversational Analytics Platform, built with [Redoc](https://github.com/Redocly/redoc) and deployed on Vercel.
+**Transform your data into conversational experiences**
 
-## 🚀 Live Documentation
+The AnswerLayer API enables you to embed powerful natural language analytics directly into your applications. Give your users the ability to ask questions in plain English and get instant insights from your data.
 
-The live documentation is available at: [https://docs.getanswerlayer.com](https://docs.getanswerlayer.com)
+## 🚀 What You Can Build
 
-## 📋 Overview
+### **Conversational Dashboards**
+Transform static dashboards into interactive conversations. Users ask questions like "What were our top products last quarter?" and get immediate answers with charts.
 
-The AnswerLayer Public API enables organizations to build conversational interfaces for their data analytics needs. This API allows you to programmatically:
+### **AI-Powered Analytics**
+Embed intelligent data analysis into any application. Your users get instant insights without learning SQL or complex analytics tools.
 
-- **Client Management**: Create and manage client organizations
-- **User Management**: Handle client users and authentication
-- **Role Management**: Assign permissions and access controls
-- **Natural Language Queries**: Process questions and generate insights
-- **Chart Generation**: Create visualizations from data
-- **Conversation Management**: Handle question chains and follow-ups
+### **Custom Data Experiences**
+Build unique data products tailored to your industry. From financial reporting to marketing analytics, create experiences that speak your users' language.
 
-## 🏗️ Architecture
+## ✨ Key Features
 
-The API follows a hierarchical structure:
+### **Natural Language Processing**
+- Ask questions in plain English
+- Get intelligent follow-up suggestions  
+- Maintain conversation context across questions
+
+### **Intelligent Visualizations**
+- Automatic chart generation based on data
+- Smart chart type selection
+- Interactive and responsive visualizations
+
+### **Enterprise Security**
+- API key authentication
+- Role-based access control
+- Data privacy and PII protection
+
+### **Scalable Architecture**
+- RESTful API design
+- Rate limiting and usage controls
+- Webhook support for real-time events
+
+## 🏗️ How It Works
 
 ```
-Organization (Your Company)
-├── Client Organizations (Your Customers)
-│   ├── Client Users (End Users)
-│   │   ├── Roles & Permissions
-│   │   ├── Questions & Answers
-│   │   └── Conversation Chains
-│   └── Database Connections
+Your Organization
+├── Applications (Your Products)
+│   ├── Database Connections (Data Sources)
+│   ├── Users (End Users)
+│   ├── Questions & Conversations
+│   └── Charts & Visualizations
 └── API Keys & Authentication
 ```
 
-## 🔐 Authentication
+## 📊 Example Use Cases
 
-All API endpoints require API key authentication:
-
-```bash
-curl -H "Authorization: Bearer YOUR_API_KEY" \
-  https://api.getanswerlayer.com/v1/clients
-```
-
-## 📚 Core Endpoints
-
-### Admin Operations (Organization Backend)
-
-- **Client Management**: `/admin/clients`
-- **User Management**: `/admin/clients/{client_id}/users`
-- **Role Management**: `/admin/clients/{client_id}/users/{user_id}/roles`
-
-### End User Operations (Client Applications)
-
-- **Ask Questions**: `POST /questions`
-- **Generate Charts**: `POST /questions/{question_id}/chart`
-- **Follow-up Suggestions**: `GET /questions/{question_id}/suggestions`
-- **Conversation Chains**: `GET /chains`
-
-## 🛠️ Development
-
-### Prerequisites
-
-- Node.js (v18+)
-- Vercel CLI (for deployment)
-
-### Local Development
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd public-api-docs
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-### File Structure
-
-```
-public-api-docs/
-├── api/
-│   └── docs.js                 # Redoc server handler
-├── answerlayer-public-api-spec.yaml  # OpenAPI specification
-├── package.json                # Dependencies and scripts
-├── vercel.json                 # Vercel deployment config
-└── README.md                   # This file
-```
-
-## 🔧 Customization
-
-### Updating the API Specification
-
-The API documentation is generated from the OpenAPI 3.0.3 specification in `answerlayer-public-api-spec.yaml`. To update the documentation:
-
-1. Edit the YAML file with your changes
-2. Deploy to see the updates live
-
-### Styling and Branding
-
-The documentation uses custom styling in `api/docs.js` that matches the AnswerLayer brand:
-
-- **Colors**: Blue gradient header with AnswerLayer brand colors
-- **Typography**: Inter font family for readability
-- **Theme**: Clean, modern design with proper contrast
-- **Responsive**: Mobile-friendly layout
-
-### Redoc Configuration
-
-The Redoc instance is configured with:
-
-- **Theme**: Custom AnswerLayer colors and typography
-- **Features**: Search enabled, expandable responses, code samples
-- **Layout**: 60/40 split between documentation and examples
-- **Navigation**: Sticky sidebar with smooth scrolling
-
-## 🚀 Deployment
-
-### Vercel Deployment
-
-The documentation is automatically deployed to Vercel:
-
-1. **Production**: Deploys from `main` branch
-2. **Preview**: Deploys from feature branches
-3. **Domain**: Custom domain configured for production
-
-### Manual Deployment
-
-```bash
-# Deploy to production
-npm run deploy
-
-# Deploy to preview
-vercel
-```
-
-### Environment Variables
-
-No environment variables are required for the documentation site.
-
-## 📝 API Examples
-
-### Create a Client
-
-```bash
-curl -X POST https://api.getanswerlayer.com/v1/admin/clients \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Acme Corporation",
-    "domain": "acme.com",
-    "description": "Large enterprise client"
-  }'
-```
-
-### Ask a Question
-
+### **SaaS Analytics Dashboard**
 ```bash
 curl -X POST https://api.getanswerlayer.com/v1/questions \
   -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
   -d '{
-    "question": "What were our top 5 products by revenue last quarter?",
-    "client_id": "client_123",
-    "user_id": "user_456"
+    "question": "Show me user engagement trends this month",
+    "application_id": "my-saas-app",
+    "user_id": "user_123"
   }'
 ```
 
-### Generate a Chart
-
+### **E-commerce Insights**
 ```bash
-curl -X POST https://api.getanswerlayer.com/v1/questions/answer_123/chart \
+curl -X POST https://api.getanswerlayer.com/v1/questions \
   -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
   -d '{
-    "chart_type": "bar",
-    "title": "Top Products by Revenue"
+    "question": "What are our best-selling products by region?",
+    "application_id": "ecommerce-platform", 
+    "user_id": "merchant_456"
   }'
 ```
 
-## 🔗 Related Links
+### **Financial Reporting**
+```bash
+curl -X POST https://api.getanswerlayer.com/v1/questions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "question": "Generate a revenue breakdown by product line",
+    "application_id": "finance-app",
+    "user_id": "analyst_789"
+  }'
+```
 
-- [AnswerLayer Website](https://getanswerlayer.com)
-- [Get Started](https://getanswerlayer.com/app)
-- [Pricing](https://getanswerlayer.com/pricing)
-- [Support](mailto:support@getanswerlayer.com)
+## 🎯 Perfect For
 
-## 📄 License
+### **Product Teams**
+Add conversational analytics to your existing products without building AI infrastructure from scratch.
 
-This documentation is licensed under the MIT License.
+### **Data Teams** 
+Democratize data access across your organization with natural language interfaces.
 
-## 🤝 Contributing
+### **Customer Success**
+Enable your customers to self-serve insights and reduce support tickets.
 
-For questions or suggestions regarding the API documentation:
+### **Sales & Marketing**
+Build compelling data-driven customer experiences that drive engagement and retention.
 
-1. Open an issue in this repository
-2. Contact our support team: support@getanswerlayer.com
-3. Join our developer community (coming soon)
+## 🚀 Get Started
+
+### **1. Get Your API Key**
+[Sign up for AnswerLayer](https://getanswerlayer.com/app) and generate your API key from the dashboard.
+
+### **2. Connect Your Data**
+Link your databases, data warehouses, or APIs through our secure connection management.
+
+### **3. Start Building**
+Use our comprehensive API to embed conversational analytics into your applications.
+
+### **4. Launch & Scale**
+Deploy with confidence using our enterprise-grade infrastructure and support.
+
+## 📖 Documentation
+
+- **[API Reference](https://docs.getanswerlayer.com)** - Complete endpoint documentation
+- **[Quick Start Guide](https://getanswerlayer.com/docs/quickstart)** - Get up and running in minutes  
+- **[Integration Examples](https://getanswerlayer.com/docs/examples)** - Real-world implementation patterns
+- **[SDKs & Libraries](https://getanswerlayer.com/docs/sdks)** - Official client libraries
+
+## 💬 Support & Community
+
+- **[Help Center](https://getanswerlayer.com/help)** - Documentation and guides
+- **[API Status](https://status.getanswerlayer.com)** - Real-time API status  
+- **[Developer Community](https://community.getanswerlayer.com)** - Connect with other developers
+- **[Email Support](mailto:support@getanswerlayer.com)** - Direct technical support
+
+## 🔧 Enterprise Features
+
+### **Advanced Security**
+- SSO integration
+- Advanced access controls
+- Audit logging and compliance
+
+### **Custom Deployment**
+- On-premises deployment options
+- Private cloud instances
+- Custom SLA agreements
+
+### **Dedicated Support**
+- Priority technical support
+- Custom integration assistance
+- Training and onboarding
+
+**Ready to transform your data into conversations?**  
+[Start your free trial today →](https://getanswerlayer.com/app)
 
 ---
 
-**Built with ❤️ by the AnswerLayer team** 
+**Questions?** Reach out to our team at [hello@getanswerlayer.com](mailto:hello@getanswerlayer.com) 
