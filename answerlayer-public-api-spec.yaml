@@ -29,14 +29,7 @@ info:
     ```
     Authorization: Bearer YOUR_API_KEY
     ```
-    
-    ### Rate Limiting
-    
-    API requests are rate-limited to ensure fair usage:
-    - **Standard plan**: 1,000 requests per hour
-    - **Pro plan**: 10,000 requests per hour  
-    - **Enterprise plan**: Custom limits
-    
+  
     ### Error Handling
     
     The API uses standard HTTP status codes and returns JSON error responses:
@@ -50,21 +43,11 @@ info:
       }
     }
     ```
-    
-    ### Webhooks
-    
-    AnswerLayer supports webhooks for real-time notifications of events such as:
-    - New questions asked
-    - Analysis completion
-    - User activity
-    
-    Configure webhooks in your dashboard or via the API.
-    
-  version: 1.0.0
+
+  version: alpha
   contact:
     name: AnswerLayer API Support
-    email: support@getanswerlayer.com
-    url: https://docs.getanswerlayer.com
+    email: josh@getanswerlayer.com
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -72,8 +55,6 @@ info:
 servers:
   - url: https://api.getanswerlayer.com/v1
     description: Production server
-  - url: https://api.staging.getanswerlayer.com/v1
-    description: Staging server
 
 security:
   - ApiKeyAuth: []
