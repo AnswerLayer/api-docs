@@ -53,7 +53,7 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://api.getanswerlayer.com/v1
+  - url: https://developers.getanswerlayer.com/v1
     description: Production server
 
 security:
