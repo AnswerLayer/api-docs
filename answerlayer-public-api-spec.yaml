@@ -83,17 +83,16 @@ paths:
         content:
           application/json:
             schema:
-                          $ref: '#/components/schemas/CreateClientRequest'
+              $ref: '#/components/schemas/CreateClientRequest'
           examples:
             basic_client:
               summary: Basic client creation
-                value:
-                  name: "Customer Analytics Dashboard"
-                  description: "Analytics dashboard for customer insights"
-                  domain: "dashboard.acme.com"
-                  settings:
-                    max_users: 100
-                    features: ["analytics", "reporting", "charts"]
+              value:
+                name: "Customer Analytics Dashboard"
+                description: "Analytics dashboard for customer insights"
+                domain: "dashboard.acme.com"
+                settings:
+                  max_users: 100
       responses:
         '201':
           description: Client created successfully
