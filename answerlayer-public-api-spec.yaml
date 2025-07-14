@@ -4,9 +4,9 @@ info:
   description: |
     ## Conversational Analytics Platform
     
-    AnswerLayer enables organizations to build conversational interfaces for their data analytics needs. 
-    This API allows you to programmatically manage applications, users, database connections, and facilitate 
-    natural language querying of your data warehouses.
+    AnswerLayer enables organizations to build conversational interfaces for their users'data analytics needs. 
+    This API allows you to programmatically manage clients, users, and facilitate natural language querying of 
+    users' data within your product.
     
     ### Architecture
     
@@ -14,7 +14,7 @@ info:
     
     ```
     Your Organization
-    ├── Applications (Your Products)
+    ├── Clients (Your Customers)
     │   ├── Users (End Users)
     │   ├── Questions & Conversations
     │   └── Charts & Visualizations
