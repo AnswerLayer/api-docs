@@ -1,0 +1,15 @@
+{
+  "name": "answerlayer-public-api-docs",
+  "version": "1.0.0",
+  "description": "Public API documentation for AnswerLayer - Conversational Analytics Platform",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "redoc": "^2.1.3"
+  },
+  "keywords": ["answerlayer", "api", "documentation", "redoc", "analytics"],
+  "author": "AnswerLayer",
+  "license": "MIT"
+} 

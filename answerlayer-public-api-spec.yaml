@@ -1,0 +1,1351 @@
+openapi: 3.0.3
+info:
+  title: AnswerLayer Public API
+  description: |
+    ## Conversational Analytics Platform
+    
+    AnswerLayer enables organizations to build conversational interfaces for their data analytics needs. 
+    This API allows you to programmatically manage clients, users, and facilitate natural language querying 
+    of your data warehouses.
+    
+    ### Authentication
+    
+    All API requests require authentication using API keys. Include your API key in the `Authorization` header:
+    
+    ```
+    Authorization: Bearer YOUR_API_KEY
+    ```
+    
+    ### Error Handling
+    
+    The API uses standard HTTP status codes and returns JSON error responses:
+    
+    ```json
+    {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid client_id provided",
+        "details": "Client with ID 'abc123' not found"
+      }
+    }
+    ```
+    
+  version: 0.1.0
+  contact:
+    name: AnswerLayer API Support
+    email: josh@getanswerlayer.com
+    url: https://docs.getanswerlayer.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.getanswerlayer.com/v1
+    description: Production server
+  - url: https://api.staging.getanswerlayer.com/v1
+    description: Staging server
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  # Admin Endpoints - Client Management
+  /admin/clients:
+    post:
+      summary: Create new client
+      description: Create a new client organization that can access your AnswerLayer instance
+      operationId: createClient
+      tags:
+        - Admin - Client Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClientRequest'
+            examples:
+              basic_client:
+                summary: Basic client creation
+                value:
+                  name: "Acme Corporation"
+                  description: "Large enterprise client in manufacturing"
+                  domain: "acme.com"
+                  settings:
+                    max_users: 100
+                    features: ["analytics", "reporting", "charts"]
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    
+    get:
+      summary: List all clients
+      description: Retrieve a paginated list of all clients in your organization
+      operationId: listClients
+      tags:
+        - Admin - Client Management
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: search
+          in: query
+          description: Search clients by name or domain
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  
+  /admin/clients/{client_id}:
+    get:
+      summary: Get client details
+      description: Retrieve detailed information about a specific client
+      operationId: getClient
+      tags:
+        - Admin - Client Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Client details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update client
+      description: Update an existing client's information
+      operationId: updateClient
+      tags:
+        - Admin - Client Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClientRequest'
+      responses:
+        '200':
+          description: Client updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete client
+      description: Delete a client and all associated data
+      operationId: deleteClient
+      tags:
+        - Admin - Client Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Client deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Admin Endpoints - User Management
+  /admin/clients/{client_id}/users:
+    post:
+      summary: Create client user
+      description: Create a new user for a specific client
+      operationId: createClientUser
+      tags:
+        - Admin - User Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClientUserRequest'
+      responses:
+        '201':
+          description: Client user created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    get:
+      summary: List client users
+      description: Retrieve all users for a specific client
+      operationId: listClientUsers
+      tags:
+        - Admin - User Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of client users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientUserList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /admin/clients/{client_id}/users/{user_id}:
+    get:
+      summary: Get client user details
+      description: Retrieve detailed information about a specific client user
+      operationId: getClientUser
+      tags:
+        - Admin - User Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Client user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update client user
+      description: Update an existing client user's information
+      operationId: updateClientUser
+      tags:
+        - Admin - User Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClientUserRequest'
+      responses:
+        '200':
+          description: Client user updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete client user
+      description: Delete a client user and all associated data
+      operationId: deleteClientUser
+      tags:
+        - Admin - User Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Client user deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Admin Endpoints - Role Management
+  /admin/clients/{client_id}/users/{user_id}/roles:
+    post:
+      summary: Assign user role
+      description: Assign a role to a client user
+      operationId: assignUserRole
+      tags:
+        - Admin - Role Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRoleRequest'
+      responses:
+        '201':
+          description: Role assigned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRole'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    get:
+      summary: List user roles
+      description: Retrieve all roles assigned to a client user
+      operationId: listUserRoles
+      tags:
+        - Admin - Role Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of user roles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRoleList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /admin/clients/{client_id}/users/{user_id}/roles/{role_id}:
+    delete:
+      summary: Remove user role
+      description: Remove a role from a client user
+      operationId: removeUserRole
+      tags:
+        - Admin - Role Management
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+        - name: role_id
+          in: path
+          required: true
+          description: Unique identifier for the role
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Role removed successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Answer Endpoints - Question & Answer
+  /questions:
+    post:
+      summary: Ask question
+      description: Submit a natural language question to be answered by AnswerLayer
+      operationId: askQuestion
+      tags:
+        - Questions & Answers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskQuestionRequest'
+            examples:
+              new_question:
+                summary: Start new conversation
+                value:
+                  question: "What were our top 5 products by revenue last quarter?"
+                  client_id: "client_123"
+                  user_id: "user_456"
+                  context:
+                    timezone: "America/New_York"
+                    preferences:
+                      chart_type: "auto"
+                      format: "detailed"
+              follow_up:
+                summary: Follow-up question
+                value:
+                  question: "Show me the monthly breakdown for those products"
+                  client_id: "client_123"
+                  user_id: "user_456"
+                  chain_id: "chain_789"
+                  context:
+                    timezone: "America/New_York"
+      responses:
+        '201':
+          description: Question processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+
+  /questions/{question_id}/chart:
+    post:
+      summary: Request chart
+      description: Generate a chart visualization for a specific answer
+      operationId: requestChart
+      tags:
+        - Questions & Answers
+      parameters:
+        - name: question_id
+          in: path
+          required: true
+          description: Unique identifier for the question/answer
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestChartRequest'
+      responses:
+        '200':
+          description: Chart generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chart'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /questions/{question_id}/suggestions:
+    get:
+      summary: Get follow-up suggestions
+      description: Retrieve suggested follow-up questions for a given answer
+      operationId: getFollowUpSuggestions
+      tags:
+        - Questions & Answers
+      parameters:
+        - name: question_id
+          in: path
+          required: true
+          description: Unique identifier for the question/answer
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of suggestions to return
+          required: false
+          schema:
+            type: integer
+            default: 5
+            minimum: 1
+            maximum: 10
+      responses:
+        '200':
+          description: Follow-up suggestions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowUpSuggestions'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Chain Management
+  /chains:
+    get:
+      summary: List chains for client user
+      description: Retrieve a list of conversation chains for a specific client user
+      operationId: listChains
+      tags:
+        - Chain Management
+      parameters:
+        - name: client_id
+          in: query
+          required: true
+          description: Unique identifier for the client
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of chains
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChainList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /chains/{chain_id}:
+    get:
+      summary: Get chain details
+      description: Retrieve detailed information about a specific chain
+      operationId: getChain
+      tags:
+        - Chain Management
+      parameters:
+        - name: chain_id
+          in: path
+          required: true
+          description: Unique identifier for the chain
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chain details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chain'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /chains/{chain_id}/answers:
+    get:
+      summary: List answers for chain
+      description: Retrieve all answers in a specific chain
+      operationId: listAnswersForChain
+      tags:
+        - Chain Management
+      parameters:
+        - name: chain_id
+          in: path
+          required: true
+          description: Unique identifier for the chain
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of answers in the chain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswerList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: API key authentication. Include your API key in the Authorization header as a Bearer token.
+
+  schemas:
+    # Client Management Schemas
+    CreateClientRequest:
+      type: object
+      required:
+        - name
+        - domain
+      properties:
+        name:
+          type: string
+          description: Display name for the client organization
+          example: "Acme Corporation"
+        description:
+          type: string
+          description: Optional description of the client
+          example: "Large enterprise client in manufacturing"
+        domain:
+          type: string
+          description: Primary domain for the client organization
+          example: "acme.com"
+        settings:
+          type: object
+          description: Client-specific configuration settings
+          properties:
+            max_users:
+              type: integer
+              description: Maximum number of users allowed
+              example: 100
+            features:
+              type: array
+              items:
+                type: string
+              description: List of enabled features
+              example: ["analytics", "reporting", "charts"]
+            data_retention_days:
+              type: integer
+              description: Number of days to retain data
+              example: 365
+
+    UpdateClientRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Display name for the client organization
+        description:
+          type: string
+          description: Optional description of the client
+        settings:
+          type: object
+          description: Client-specific configuration settings
+
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the client
+          example: "client_123"
+        name:
+          type: string
+          description: Display name for the client organization
+          example: "Acme Corporation"
+        description:
+          type: string
+          description: Optional description of the client
+          example: "Large enterprise client in manufacturing"
+        domain:
+          type: string
+          description: Primary domain for the client organization
+          example: "acme.com"
+        settings:
+          type: object
+          description: Client-specific configuration settings
+        created_at:
+          type: string
+          format: date-time
+          description: When the client was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the client was last updated
+        user_count:
+          type: integer
+          description: Current number of users
+          example: 25
+
+    ClientList:
+      type: object
+      properties:
+        clients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # User Management Schemas
+    CreateClientUserRequest:
+      type: object
+      required:
+        - email
+        - name
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address for the user
+          example: "john.doe@acme.com"
+        name:
+          type: string
+          description: Full name of the user
+          example: "John Doe"
+        role:
+          type: string
+          description: Initial role for the user
+          example: "analyst"
+        metadata:
+          type: object
+          description: Additional user metadata
+          properties:
+            department:
+              type: string
+              example: "Finance"
+            title:
+              type: string
+              example: "Senior Analyst"
+
+    UpdateClientUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Full name of the user
+        metadata:
+          type: object
+          description: Additional user metadata
+
+    ClientUser:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the user
+          example: "user_456"
+        client_id:
+          type: string
+          description: ID of the client this user belongs to
+          example: "client_123"
+        email:
+          type: string
+          format: email
+          description: Email address for the user
+          example: "john.doe@acme.com"
+        name:
+          type: string
+          description: Full name of the user
+          example: "John Doe"
+        metadata:
+          type: object
+          description: Additional user metadata
+        roles:
+          type: array
+          items:
+            type: string
+          description: List of roles assigned to the user
+          example: ["analyst", "viewer"]
+        created_at:
+          type: string
+          format: date-time
+          description: When the user was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the user was last updated
+        last_active:
+          type: string
+          format: date-time
+          description: When the user was last active
+
+    ClientUserList:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientUser'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Role Management Schemas
+    AssignRoleRequest:
+      type: object
+      required:
+        - role_name
+      properties:
+        role_name:
+          type: string
+          description: Name of the role to assign
+          example: "analyst"
+        permissions:
+          type: array
+          items:
+            type: string
+          description: Specific permissions for this role assignment
+          example: ["read_data", "create_charts"]
+
+    UserRole:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the role assignment
+          example: "role_789"
+        user_id:
+          type: string
+          description: ID of the user
+          example: "user_456"
+        role_name:
+          type: string
+          description: Name of the role
+          example: "analyst"
+        permissions:
+          type: array
+          items:
+            type: string
+          description: Specific permissions for this role
+          example: ["read_data", "create_charts"]
+        assigned_at:
+          type: string
+          format: date-time
+          description: When the role was assigned
+
+    UserRoleList:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRole'
+
+    # Question & Answer Schemas
+    AskQuestionRequest:
+      type: object
+      required:
+        - question
+        - client_id
+        - user_id
+      properties:
+        question:
+          type: string
+          description: Natural language question to ask
+          example: "What were our top 5 products by revenue last quarter?"
+        client_id:
+          type: string
+          description: ID of the client asking the question
+          example: "client_123"
+        user_id:
+          type: string
+          description: ID of the user asking the question
+          example: "user_456"
+        chain_id:
+          type: string
+          description: Optional chain ID for follow-up questions
+          example: "chain_789"
+        context:
+          type: object
+          description: Additional context for the question
+          properties:
+            timezone:
+              type: string
+              description: User's timezone
+              example: "America/New_York"
+            preferences:
+              type: object
+              description: User preferences
+              properties:
+                chart_type:
+                  type: string
+                  description: Preferred chart type
+                  example: "auto"
+                format:
+                  type: string
+                  description: Response format preference
+                  example: "detailed"
+
+    Answer:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the answer
+          example: "answer_abc123"
+        question_id:
+          type: string
+          description: ID of the original question
+          example: "question_def456"
+        chain_id:
+          type: string
+          description: ID of the conversation chain
+          example: "chain_789"
+        question:
+          type: string
+          description: The original question
+          example: "What were our top 5 products by revenue last quarter?"
+        answer:
+          type: string
+          description: Natural language answer
+          example: "Based on your Q3 2024 data, here are the top 5 products by revenue..."
+        sql_query:
+          type: string
+          description: SQL query that was executed
+          example: "SELECT product_name, SUM(revenue) as total_revenue FROM sales WHERE quarter = 'Q3' AND year = 2024 GROUP BY product_name ORDER BY total_revenue DESC LIMIT 5"
+        data:
+          type: object
+          description: Raw data results
+          properties:
+            columns:
+              type: array
+              items:
+                type: string
+              example: ["product_name", "total_revenue"]
+            rows:
+              type: array
+              items:
+                type: array
+              example: [["Widget A", 125000], ["Widget B", 98000], ["Widget C", 87000]]
+        metadata:
+          type: object
+          description: Additional metadata about the answer
+          properties:
+            execution_time:
+              type: number
+              description: Query execution time in seconds
+              example: 0.245
+            row_count:
+              type: integer
+              description: Number of rows returned
+              example: 5
+        created_at:
+          type: string
+          format: date-time
+          description: When the answer was created
+        client_id:
+          type: string
+          description: ID of the client
+          example: "client_123"
+        user_id:
+          type: string
+          description: ID of the user who asked the question
+          example: "user_456"
+
+    RequestChartRequest:
+      type: object
+      required:
+        - chart_type
+      properties:
+        chart_type:
+          type: string
+          enum: ["bar", "line", "pie", "scatter", "bubble", "auto"]
+          description: Type of chart to generate
+          example: "bar"
+        title:
+          type: string
+          description: Optional title for the chart
+          example: "Top Products by Revenue"
+        options:
+          type: object
+          description: Chart-specific options
+          properties:
+            color_scheme:
+              type: string
+              description: Color scheme for the chart
+              example: "default"
+            show_legend:
+              type: boolean
+              description: Whether to show legend
+              example: true
+
+    Chart:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the chart
+          example: "chart_xyz789"
+        answer_id:
+          type: string
+          description: ID of the associated answer
+          example: "answer_abc123"
+        chart_type:
+          type: string
+          description: Type of chart
+          example: "bar"
+        title:
+          type: string
+          description: Chart title
+          example: "Top Products by Revenue"
+        config:
+          type: object
+          description: Chart configuration
+          properties:
+            data:
+              type: object
+              description: Chart data configuration
+            options:
+              type: object
+              description: Chart display options
+        created_at:
+          type: string
+          format: date-time
+          description: When the chart was created
+
+    FollowUpSuggestions:
+      type: object
+      properties:
+        suggestions:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+                description: Suggested follow-up question
+                example: "Show me the monthly breakdown for these products"
+              confidence:
+                type: number
+                description: Confidence score for the suggestion
+                example: 0.85
+              category:
+                type: string
+                description: Category of the suggestion
+                example: "drill_down"
+
+    # Chain Management Schemas
+    Chain:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the chain
+          example: "chain_789"
+        client_id:
+          type: string
+          description: ID of the client
+          example: "client_123"
+        user_id:
+          type: string
+          description: ID of the user who started the chain
+          example: "user_456"
+        title:
+          type: string
+          description: Title of the conversation chain
+          example: "Q3 Revenue Analysis"
+        answer_count:
+          type: integer
+          description: Number of answers in the chain
+          example: 5
+        created_at:
+          type: string
+          format: date-time
+          description: When the chain was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the chain was last updated
+
+    ChainList:
+      type: object
+      properties:
+        chains:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chain'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    AnswerList:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # Common Schemas
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        limit:
+          type: integer
+          description: Number of items per page
+          example: 20
+        total:
+          type: integer
+          description: Total number of items
+          example: 150
+        total_pages:
+          type: integer
+          description: Total number of pages
+          example: 8
+        has_next:
+          type: boolean
+          description: Whether there are more pages
+          example: true
+        has_previous:
+          type: boolean
+          description: Whether there are previous pages
+          example: false
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Error code
+              example: "VALIDATION_ERROR"
+            message:
+              type: string
+              description: Human-readable error message
+              example: "Invalid client_id provided"
+            details:
+              type: string
+              description: Additional error details
+              example: "Client with ID 'abc123' not found"
+            request_id:
+              type: string
+              description: Unique request identifier for debugging
+              example: "req_123456789"
+
+  responses:
+    BadRequest:
+      description: Bad request - Invalid input parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "VALIDATION_ERROR"
+              message: "Invalid input parameters"
+              details: "The 'client_id' field is required"
+
+    Unauthorized:
+      description: Unauthorized - Invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "UNAUTHORIZED"
+              message: "Invalid API key"
+              details: "Please provide a valid API key in the Authorization header"
+
+    Forbidden:
+      description: Forbidden - Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "FORBIDDEN"
+              message: "Insufficient permissions"
+              details: "You don't have permission to access this resource"
+
+    NotFound:
+      description: Not found - Resource doesn't exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "NOT_FOUND"
+              message: "Resource not found"
+              details: "The requested resource could not be found"
+
+    Conflict:
+      description: Conflict - Resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "CONFLICT"
+              message: "Resource already exists"
+              details: "A client with this domain already exists"
+
+    RateLimitExceeded:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "RATE_LIMIT_EXCEEDED"
+              message: "Rate limit exceeded"
+              details: "You have exceeded the rate limit. Please try again later"
+
+tags:
+  - name: Admin - Client Management
+    description: Operations for managing client organizations
+  - name: Admin - User Management
+    description: Operations for managing client users
+  - name: Admin - Role Management
+    description: Operations for managing user roles and permissions
+  - name: Questions & Answers
+    description: Natural language question processing and answer generation
+  - name: Chain Management
+    description: Operations for managing conversation chains 
