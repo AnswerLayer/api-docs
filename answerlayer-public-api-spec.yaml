@@ -17,7 +17,7 @@ info:
     ├── Database Connections (Your Data Warehouse)
     ├── Clients (Your Customers)
     │   ├── Users (Individuals using your product)
-    │   ├── Questions & Conversations (Auto-scoped to client data)
+    │   ├── Answers & Chains of Answers (Auto-scoped to client data)
     │   └── Charts & Visualizations
     └── API Keys & Authentication
     ```
@@ -55,7 +55,7 @@ info:
       "error": {
         "code": "VALIDATION_ERROR",
         "message": "Invalid client_id provided",
-        "details": "Client with ID 'abc123' not found"
+        "details": "Client with ID 'client_abc123' not found"
       }
     }
     ```
@@ -404,32 +404,36 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # Question & Answer Endpoints
-  /questions:
+  # Answer Endpoints
+  /answer:
     post:
-      summary: Ask question
-      description: Submit a natural language question to be answered by AnswerLayer
-      operationId: askQuestion
+      summary:  Get answer
+      description: Get an answer to a natural language question
+      operationId: getAnswer
       tags:
-        - Questions & Answers
+        - Answers
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AskQuestionRequest'
+              $ref: '#/components/schemas/GetAnswerRequest'
             examples:
-              new_question:
+              new_answer:
                 summary: Start new conversation
                 value:
-                  question: "What were our top 5 products by revenue last quarter?"
+                  question: "Why did our costs increase last quarter?"
                   client_id: "client_123"
                   user_id: "user_456"
-                  context:
-                    timezone: "America/New_York"
-                    preferences:
-                      chart_type: "auto"
+                  context: {
+                    instructions: "Help the user understand their billing history",
+                    notes: "The user is on the /billing page",
+                    timezone: "America/New_York",
+                    preferences: {
+                      chart_type: "auto",
                       format: "detailed"
+                    }
+                  }
               follow_up:
                 summary: Follow-up question
                 value:
@@ -437,11 +441,18 @@ paths:
                   client_id: "client_123"
                   user_id: "user_456"
                   chain_id: "chain_789"
-                  context:
-                    timezone: "America/New_York"
+                  context: {
+                    instructions: "Help the user understand their billing history",
+                    notes: "The user is on the /billing page",
+                    timezone: "America/New_York",
+                    preferences: {
+                      chart_type: "auto",
+                      format: "detailed"
+                    }
+                  }
       responses:
         '201':
-          description: Question processed successfully
+          description: Answer processed successfully
           content:
             application/json:
               schema:
@@ -455,15 +466,15 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimitExceeded'
 
-  /questions/{question_id}/chart:
+  /answer/{answer_id}/chart:
     post:
       summary: Request chart
       description: Generate a chart visualization for a specific answer
       operationId: requestChart
       tags:
-        - Questions & Answers
+        - Answers
       parameters:
-        - name: question_id
+        - name: answer_id
           in: path
           required: true
           description: Unique identifier for the question/answer
@@ -489,15 +500,15 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /questions/{question_id}/suggestions:
+  /answer/{answer_id}/suggestions:
     get:
       summary: Get follow-up suggestions
       description: Retrieve suggested follow-up questions for a given answer
       operationId: getFollowUpSuggestions
       tags:
-        - Questions & Answers
+        - Answers
       parameters:
-        - name: question_id
+        - name: answer_id
           in: path
           required: true
           description: Unique identifier for the question/answer
@@ -824,7 +835,7 @@ components:
           $ref: '#/components/schemas/Pagination'
 
     # Question & Answer Schemas
-    AskQuestionRequest:
+    GetAnswerRequest:
       type: object
       required:
         - question
@@ -851,22 +862,17 @@ components:
           type: object
           description: Additional context for the question
           properties:
-            timezone:
-              type: string
-              description: User's timezone
-              example: "America/New_York"
-            preferences:
+            body:
               type: object
-              description: User preferences
-              properties:
-                chart_type:
-                  type: string
-                  description: Preferred chart type
-                  example: "auto"
-                format:
-                  type: string
-                  description: Response format preference
-                  example: "detailed"
+              description: Any page context, or other information that may be relevant to the question
+              example: {
+                "body": "The user is on the /billing page",
+                "timezone": "America/New_York",
+                "preferences": {
+                  "chart_type": "auto",
+                  "format": "detailed"
+                }
+              }
 
     Answer:
       type: object
@@ -875,10 +881,6 @@ components:
           type: string
           description: Unique identifier for the answer
           example: "answer_abc123"
-        question_id:
-          type: string
-          description: ID of the original question
-          example: "question_def456"
         chain_id:
           type: string
           description: ID of the conversation chain
@@ -933,6 +935,10 @@ components:
           type: string
           description: ID of the user who asked the question
           example: "user_456"
+        credit_usage:
+          type: number
+          description: Amount of credits used to generate the answer
+          example: 0.01
 
     RequestChartRequest:
       type: object
@@ -1195,11 +1201,12 @@ components:
               details: "You have exceeded the rate limit. Please try again later"
 
 tags:
+  - name: Answers
+    description: Natural language question processing and answer generation
+  - name: Chain Management
+    description: Operations for managing conversation chains 
   - name: Admin - Client Management
     description: Operations for managing clients
   - name: Admin - User Management
     description: Operations for managing client users
-  - name: Questions & Answers
-    description: Natural language question processing and answer generation
-  - name: Chain Management
-    description: Operations for managing conversation chains 
+
