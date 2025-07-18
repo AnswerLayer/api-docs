@@ -545,7 +545,7 @@ export default function handler(req, res) {
         <div itemscope itemtype="https://schema.org/ContactPoint">
             <meta itemprop="contactType" content="technical support">
             <meta itemprop="url" content="https://getanswerlayer.com/contact">
-            <meta itemprop="email" content="support@getanswerlayer.com">
+            <meta itemprop="email" content="josh@getanswerlayer.com">
         </div>
         
         <div itemscope itemtype="https://schema.org/Organization">
@@ -839,7 +839,7 @@ export default function handler(req, res) {
 
         // Initialize Redoc with AnswerLayer brand styling
         Redoc.init(
-            '../answerlayer-public-api-spec.yaml',
+            '/answerlayer-public-api-spec.yaml',
             {
                 theme: {
                     colors: {
