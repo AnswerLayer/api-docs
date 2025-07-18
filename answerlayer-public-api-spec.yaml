@@ -192,6 +192,46 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Semantic Layer - Entities
+  /semantic/entities/generate:
+    post:
+      summary: Generate entities from schema
+      description: |
+        Automatically generate entities by analyzing your database schema.
+        Uses AI to identify core business objects from your table structure.
+      operationId: generateEntities
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateEntitiesRequest'
+      responses:
+        '200':
+          description: Entities generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EntityResponse'
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        confidence:
+                          type: number
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /semantic/entities:
     post:
       summary: Create entity
@@ -319,6 +359,46 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Semantic Layer - Relationships
+  /semantic/relationships/generate:
+    post:
+      summary: Generate relationships from schema
+      description: |
+        Automatically generate relationships by analyzing foreign key constraints 
+        and naming patterns in your database schema.
+      operationId: generateRelationships
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateRelationshipsRequest'
+      responses:
+        '200':
+          description: Relationships generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relationships:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RelationshipResponse'
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        confidence:
+                          type: number
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /semantic/relationships:
     post:
       summary: Create relationship
@@ -446,6 +526,46 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Semantic Layer - Filters
+  /semantic/filters/generate:
+    post:
+      summary: Generate filters from schema
+      description: |
+        Automatically generate common filters by analyzing data patterns, 
+        status columns, and temporal fields in your database.
+      operationId: generateFilters
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateFiltersRequest'
+      responses:
+        '200':
+          description: Filters generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filters:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FilterResponse'
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        confidence:
+                          type: number
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /semantic/filters:
     post:
       summary: Create filter
@@ -573,6 +693,46 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Semantic Layer - Dimensions
+  /semantic/dimensions/generate:
+    post:
+      summary: Generate dimensions from schema
+      description: |
+        Automatically generate dimensions by analyzing categorical columns,
+        enumerated values, and potential grouping fields in your database.
+      operationId: generateDimensions
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateDimensionsRequest'
+      responses:
+        '200':
+          description: Dimensions generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dimensions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DimensionResponse'
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        confidence:
+                          type: number
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /semantic/dimensions:
     post:
       summary: Create dimension
@@ -700,6 +860,46 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Semantic Layer - Measures
+  /semantic/measures/generate:
+    post:
+      summary: Generate measures from schema
+      description: |
+        Automatically generate measures by analyzing numeric columns
+        and identifying aggregatable fields like amounts, counts, and quantities.
+      operationId: generateMeasures
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateMeasuresRequest'
+      responses:
+        '200':
+          description: Measures generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  measures:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MeasureResponse'
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        confidence:
+                          type: number
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /semantic/measures:
     post:
       summary: Create measure
@@ -827,6 +1027,46 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # Semantic Layer - Metrics
+  /semantic/metrics/generate:
+    post:
+      summary: Generate metrics from existing measures
+      description: |
+        Automatically generate business metrics by combining existing measures
+        and applying common business logic patterns and formulas.
+      operationId: generateMetrics
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateMetricsRequest'
+      responses:
+        '200':
+          description: Metrics generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MetricResponse'
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        confidence:
+                          type: number
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /semantic/metrics:
     post:
       summary: Create metric
@@ -1723,6 +1963,10 @@ components:
     GenerateSemanticLayerRequest:
       type: object
       properties:
+        prompt:
+          type: string
+          description: Custom prompt to guide the AI generation process
+          example: "This is an e-commerce platform. Focus on customer behavior, order patterns, and revenue metrics."
         options:
           type: object
           properties:
@@ -1802,6 +2046,181 @@ components:
           type: string
           description: Version description or change notes
           example: "Added customer segmentation dimensions"
+
+    # Individual Module Generation Requests
+    GenerateEntitiesRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: Custom prompt to guide entity generation
+          example: "Focus on identifying customer and product entities. Consider user roles and permissions."
+        connection_id:
+          type: string
+          description: Database connection to analyze
+          example: "conn_123"
+        options:
+          type: object
+          properties:
+            tables:
+              type: array
+              items:
+                type: string
+              description: Specific tables to analyze for entities
+              example: ["users", "customers", "products"]
+            exclude_system_tables:
+              type: boolean
+              default: true
+              description: Whether to exclude system/metadata tables
+
+    GenerateRelationshipsRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: Custom prompt to guide relationship generation
+          example: "Map the relationships between customers, orders, and products. Include many-to-many relationships through junction tables."
+        connection_id:
+          type: string
+          description: Database connection to analyze
+          example: "conn_123"
+        entity_ids:
+          type: array
+          items:
+            type: string
+          description: Specific entity IDs to generate relationships for (optional)
+          example: ["entity_123", "entity_456"]
+        options:
+          type: object
+          properties:
+            include_indirect_relationships:
+              type: boolean
+              default: false
+              description: Include relationships through intermediate entities
+
+    GenerateFiltersRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: Custom prompt to guide filter generation
+          example: "Create filters for active/inactive records, date ranges, and user status. Focus on business-relevant segmentation."
+        connection_id:
+          type: string
+          description: Database connection to analyze
+          example: "conn_123"
+        entity_ids:
+          type: array
+          items:
+            type: string
+          description: Specific entity IDs to generate filters for (optional)
+          example: ["entity_123", "entity_456"]
+        options:
+          type: object
+          properties:
+            include_temporal_filters:
+              type: boolean
+              default: true
+              description: Include time-based filters (last 30 days, current month, etc.)
+            include_status_filters:
+              type: boolean
+              default: true
+              description: Include status-based filters (active, completed, etc.)
+
+    GenerateDimensionsRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: Custom prompt to guide dimension generation
+          example: "Create dimensions for customer segmentation, product categories, and geographic analysis. Include calculated fields for business insights."
+        connection_id:
+          type: string
+          description: Database connection to analyze
+          example: "conn_123"
+        entity_ids:
+          type: array
+          items:
+            type: string
+          description: Specific entity IDs to generate dimensions for (optional)
+          example: ["entity_123", "entity_456"]
+        options:
+          type: object
+          properties:
+            include_calculated_dimensions:
+              type: boolean
+              default: true
+              description: Include derived/calculated dimensions
+            max_categorical_values:
+              type: integer
+              default: 50
+              description: Maximum unique values for categorical dimensions
+
+    GenerateMeasuresRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: Custom prompt to guide measure generation
+          example: "Generate revenue, quantity, and count measures. Focus on financial and operational KPIs."
+        connection_id:
+          type: string
+          description: Database connection to analyze
+          example: "conn_123"
+        entity_ids:
+          type: array
+          items:
+            type: string
+          description: Specific entity IDs to generate measures for (optional)
+          example: ["entity_123", "entity_456"]
+        options:
+          type: object
+          properties:
+            include_count_measures:
+              type: boolean
+              default: true
+              description: Include COUNT(*) measures for entities
+            include_sum_measures:
+              type: boolean
+              default: true
+              description: Include SUM measures for numeric columns
+            include_avg_measures:
+              type: boolean
+              default: false
+              description: Include AVERAGE measures for numeric columns
+
+    GenerateMetricsRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: Custom prompt to guide metric generation
+          example: "Create business metrics like AOV, conversion rates, and growth metrics. Focus on actionable KPIs."
+        connection_id:
+          type: string
+          description: Database connection to analyze
+          example: "conn_123"
+        measure_ids:
+          type: array
+          items:
+            type: string
+          description: Specific measure IDs to use for metric generation (optional)
+          example: ["measure_123", "measure_456"]
+        options:
+          type: object
+          properties:
+            industry:
+              type: string
+              description: Industry context for metric suggestions
+              example: "e-commerce"
+            include_ratio_metrics:
+              type: boolean
+              default: true
+              description: Include ratio-based metrics (revenue per customer, etc.)
+            include_growth_metrics:
+              type: boolean
+              default: true
+              description: Include growth/trend metrics
 
     SemanticLayer:
       type: object
@@ -2814,15 +3233,15 @@ components:
               details: "You have exceeded the rate limit. Please try again later"
 
 tags:
+  - name: Connections
+    description: Manage database connections and analyze schemas
+  - name: Answers
+    description: Natural language question processing and answer generation
   - name: Semantic Layer
     description: |
       Manage your semantic layer to define how data is understood. The semantic layer 
       translates between database schemas and business concepts, enabling more accurate 
       natural language querying.
-  - name: Connections
-    description: Manage database connections and analyze schemas
-  - name: Answers
-    description: Natural language question processing and answer generation
   - name: Chain Management
     description: Operations for managing conversation chains
   - name: Admin - Client Management
