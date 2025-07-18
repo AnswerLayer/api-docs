@@ -1,13 +1,208 @@
 export default function handler(req, res) {
   const html = `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" itemscope itemtype="https://schema.org/TechArticle">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnswerLayer Public API Documentation</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>AnswerLayer Public API Documentation - Conversational Analytics Platform</title>
+    <meta name="title" content="AnswerLayer Public API Documentation - Conversational Analytics Platform">
+    <meta name="description" content="Complete API documentation for AnswerLayer's conversational analytics platform. Embed natural language querying, semantic layers, and business intelligence into your applications with our REST API.">
+    <meta name="keywords" content="API documentation, conversational analytics, natural language query API, semantic layer API, business intelligence API, embedded analytics, database API, PII detection API, REST API, developer documentation">
+    <meta name="author" content="AnswerLayer">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://docs.getanswerlayer.com/">
+    
+    <!-- Language and Geographic Targeting -->
+    <meta name="language" content="en-US">
+    <meta name="geo.region" content="US">
+    <meta name="geo.country" content="USA">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AnswerLayer">
+    <meta property="og:url" content="https://docs.getanswerlayer.com/">
+    <meta property="og:title" content="AnswerLayer Public API Documentation - Conversational Analytics Platform">
+    <meta property="og:description" content="Complete API documentation for AnswerLayer's conversational analytics platform. Embed natural language querying, semantic layers, and business intelligence into your applications.">
+    <meta property="og:image" content="https://getanswerlayer.com/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="AnswerLayer API Documentation - Natural Language Query API">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:site" content="@getanswerlayer">
+    <meta property="twitter:creator" content="@getanswerlayer">
+    <meta property="twitter:url" content="https://docs.getanswerlayer.com/">
+    <meta property="twitter:title" content="AnswerLayer Public API Documentation">
+    <meta property="twitter:description" content="REST API for embedding conversational analytics, natural language querying, and business intelligence into your applications.">
+    <meta property="twitter:image" content="https://getanswerlayer.com/og-image.jpg">
+    <meta property="twitter:image:alt" content="AnswerLayer API Documentation">
+    
+    <!-- LinkedIn -->
+    <meta property="article:author" content="AnswerLayer">
+    <meta property="article:published_time" content="2024-01-15T00:00:00Z">
+    <meta property="article:modified_time" content="2024-01-15T00:00:00Z">
+    <meta property="article:section" content="Technology">
+    <meta property="article:tag" content="API">
+    <meta property="article:tag" content="Analytics">
+    <meta property="article:tag" content="Business Intelligence">
+    <meta property="article:tag" content="Natural Language Processing">
+    
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["TechArticle", "APIReference"],
+      "headline": "AnswerLayer Public API Documentation - Conversational Analytics Platform",
+      "description": "Complete REST API documentation for AnswerLayer's conversational analytics platform. Embed natural language querying, semantic layers, and business intelligence into your applications.",
+      "image": "https://getanswerlayer.com/og-image.jpg",
+      "author": {
+        "@type": "Organization",
+        "name": "AnswerLayer",
+        "url": "https://getanswerlayer.com",
+        "logo": "https://getanswerlayer.com/logo.png",
+        "sameAs": [
+          "https://twitter.com/getanswerlayer",
+          "https://linkedin.com/company/answerlayer"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AnswerLayer",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://getanswerlayer.com/logo.png"
+        }
+      },
+      "datePublished": "2025-07-18T00:00:00Z",
+      "dateModified": "2025-07-18T00:00:00Z",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://docs.getanswerlayer.com/"
+      },
+      "about": {
+        "@type": "SoftwareApplication",
+        "name": "AnswerLayer API",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Any",
+        "description": "Conversational analytics platform API for embedding natural language querying and business intelligence",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "description": "Free tier available"
+        },
+        "featureList": [
+          "Natural Language Querying",
+          "Semantic Layer Management", 
+          "PII Detection and Protection",
+          "Multi-tenant Data Isolation",
+          "Real-time Analytics",
+          "Chart Generation",
+          "Database Connection Management"
+        ]
+      },
+      "programmingLanguage": "JavaScript",
+      "codeRepository": "https://github.com/answerlayer/public-api",
+      "discussionUrl": "https://getanswerlayer.com/contact",
+      "license": "https://getanswerlayer.com/terms"
+    }
+    </script>
+    
+    <!-- Additional Schema for API Documentation -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "APIReference",
+      "name": "AnswerLayer Public API",
+      "description": "REST API for conversational analytics, natural language querying, and embedded business intelligence",
+      "url": "https://docs.getanswerlayer.com/",
+      "version": "Alpha",
+      "programmingLanguage": ["JavaScript", "Python", "cURL", "Node.js"],
+      "provider": {
+        "@type": "Organization",
+        "name": "AnswerLayer",
+        "url": "https://getanswerlayer.com"
+      },
+      "documentation": "https://docs.getanswerlayer.com/",
+      "termsOfService": "https://getanswerlayer.com/terms",
+      "license": "https://getanswerlayer.com/terms",
+             "potentialAction": {
+         "@type": "ConsumeAction",
+         "target": {
+           "@type": "EntryPoint",
+           "urlTemplate": "https://docs.getanswerlayer.com/#{+section}",
+           "description": "API documentation section access"
+         }
+       }
+    }
+    </script>
+    
+    <!-- Favicon and Icons -->
     <link rel="icon" type="image/png" href="https://getanswerlayer.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://getanswerlayer.com/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://getanswerlayer.com/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://getanswerlayer.com/favicon-16x16.png">
+    <link rel="manifest" href="https://getanswerlayer.com/site.webmanifest">
+    
+    <!-- DNS Prefetch and Performance Optimizations -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//unpkg.com">
+    <link rel="dns-prefetch" href="//scripts.simpleanalyticscdn.com">
+    <link rel="dns-prefetch" href="//us.i.posthog.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://unpkg.com/redoc@2.1.3/bundles/redoc.standalone.js" as="script">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#1e293b">
+    <meta name="msapplication-TileColor" content="#1e293b">
+    <meta name="msapplication-config" content="https://getanswerlayer.com/browserconfig.xml">
+    
+    <!-- Structured Data for Software Application -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareSourceCode",
+      "name": "AnswerLayer Public API",
+      "description": "REST API client libraries and documentation for AnswerLayer's conversational analytics platform",
+      "programmingLanguage": ["JavaScript", "Python", "cURL"],
+      "runtimePlatform": "Web API",
+      "targetProduct": {
+        "@type": "SoftwareApplication",
+        "name": "AnswerLayer Platform",
+        "applicationCategory": "BusinessApplication"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "AnswerLayer"
+      },
+      "license": "https://getanswerlayer.com/terms",
+      "codeRepository": "https://github.com/answerlayer/public-api"
+    }
+    </script>
+    
+    <!-- Knowledge Graph for Conversational Analytics -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DefinedTerm",
+      "name": "Conversational Analytics",
+      "description": "A technology that enables users to query and analyze data using natural language instead of complex SQL or BI tools",
+      "termCode": "conversational-analytics",
+      "inDefinedTermSet": {
+        "@type": "DefinedTermSet",
+        "name": "Business Intelligence Terminology",
+        "description": "Terms related to business intelligence and data analytics"
+      }
+    }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -223,25 +418,147 @@ export default function handler(req, res) {
     </style>
 </head>
 <body>
-    <div class="header">
+    <header class="header" role="banner">
         <div class="header-content">
             <div class="logo-section">
-                <div>
-                    <h1>AnswerLayer Public API</h1>
-                    <p>Conversational Analytics Platform</p>
+                <div itemscope itemtype="https://schema.org/Organization">
+                    <h1 itemprop="name">AnswerLayer Public API</h1>
+                    <p itemprop="description">Conversational Analytics Platform</p>
+                    <meta itemprop="url" content="https://getanswerlayer.com">
+                    <meta itemprop="logo" content="https://getanswerlayer.com/logo.png">
                 </div>
             </div>
-            <nav class="nav-links">
-                <a href="https://getanswerlayer.com" class="nav-link">Home</a>
-                <a href="https://getanswerlayer.com/pricing" class="nav-link">Pricing</a>
-                <a href="https://getanswerlayer.com/sign-up" class="cta-button">Get Started</a>
+            <nav class="nav-links" role="navigation" aria-label="Main navigation">
+                <a href="https://getanswerlayer.com" class="nav-link" rel="noopener">Home</a>
+                <a href="https://getanswerlayer.com/pricing" class="nav-link" rel="noopener">Pricing</a>
+                <a href="https://getanswerlayer.com/sign-up" class="cta-button" rel="noopener">Get Started</a>
             </nav>
         </div>
+    </header>
+
+    <!-- Hidden structured content for AI and search engines -->
+    <div style="display: none;" aria-hidden="true">
+        <!-- FAQ content for AEO -->
+        <section itemscope itemtype="https://schema.org/FAQPage">
+            <h2>Frequently Asked Questions about AnswerLayer API</h2>
+            
+            <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <h3 itemprop="name">What is AnswerLayer API?</h3>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <div itemprop="text">AnswerLayer API is a conversational analytics platform that allows you to embed natural language querying, semantic layers, and business intelligence into your applications. It provides REST endpoints for managing database connections, detecting PII, and generating answers from natural language questions.</div>
+                </div>
+            </div>
+
+            <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <h3 itemprop="name">How does natural language querying work?</h3>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <div itemprop="text">AnswerLayer converts natural language questions into SQL queries using AI and semantic layer definitions. Users can ask questions like "What were our top products last quarter?" and receive structured data responses with automatically generated charts.</div>
+                </div>
+            </div>
+
+            <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <h3 itemprop="name">What databases does AnswerLayer support?</h3>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <div itemprop="text">AnswerLayer supports PostgreSQL, MySQL, Snowflake, BigQuery, Redshift, and SQL Server. The API provides unified access regardless of your underlying database technology.</div>
+                </div>
+            </div>
+
+            <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <h3 itemprop="name">How does PII detection work?</h3>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <div itemprop="text">AnswerLayer automatically detects personally identifiable information (PII) in your database columns using AI analysis. It provides endpoints to scan for PII, update column protection settings, and get summary reports of data privacy compliance.</div>
+                </div>
+            </div>
+
+            <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <h3 itemprop="name">Is the API secure for multi-tenant applications?</h3>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <div itemprop="text">Yes, AnswerLayer provides built-in multi-tenant data isolation. Each client only has access to their own data, with automatic scoping and filtering enforced at the API level.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical specifications for AI engines -->
+        <section itemscope itemtype="https://schema.org/TechArticle">
+            <h2>API Technical Specifications</h2>
+            <meta itemprop="about" content="REST API for conversational analytics and business intelligence">
+            <div itemprop="articleBody">
+                <p>Base URL: https://docs.getanswerlayer.com/v1</p>
+                <p>Authentication: Bearer token (API key)</p>
+                <p>Content Type: application/json</p>
+                <p>Rate Limits: Varies by plan</p>
+                <p>API Version: Alpha</p>
+                
+                <h3>Main Endpoint Categories:</h3>
+                <ul>
+                    <li>Connections: Manage database connections and schema analysis</li>
+                    <li>Semantic Layer: CRUD operations for entities, relationships, filters, dimensions, measures, and metrics</li>
+                    <li>PII Protection: Detect and manage personally identifiable information</li>
+                    <li>Answers: Natural language question processing and chart generation</li>
+                    <li>Admin: Client and user management for multi-tenant applications</li>
+                    <li>Chain Management: Conversation history and follow-up questions</li>
+                </ul>
+
+                <h3>Key Features:</h3>
+                <ul>
+                    <li>Natural language to SQL conversion</li>
+                    <li>AI-powered semantic layer generation</li>
+                    <li>Automatic PII detection and protection</li>
+                    <li>Multi-tenant data isolation</li>
+                    <li>Real-time chart generation</li>
+                    <li>Conversation chain management</li>
+                    <li>Support for major database platforms</li>
+                </ul>
+            </div>
+        </section>
     </div>
 
-    <div class="content">
-        <div id="redoc-container" class="redoc-container"></div>
-    </div>
+    <main class="content" role="main" itemscope itemtype="https://schema.org/WebApplication">
+        <meta itemprop="name" content="AnswerLayer API Documentation">
+        <meta itemprop="description" content="Interactive API documentation for AnswerLayer's conversational analytics platform">
+        <meta itemprop="applicationCategory" content="DeveloperApplication">
+        <meta itemprop="operatingSystem" content="Web Browser">
+        
+        <!-- Breadcrumb for better navigation -->
+        <nav aria-label="Breadcrumb" style="display: none;">
+            <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a itemprop="item" href="https://getanswerlayer.com">
+                        <span itemprop="name">AnswerLayer</span>
+                    </a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a itemprop="item" href="https://docs.getanswerlayer.com">
+                        <span itemprop="name">API Documentation</span>
+                    </a>
+                    <meta itemprop="position" content="2" />
+                </li>
+            </ol>
+        </nav>
+
+        <div id="redoc-container" class="redoc-container" role="document" aria-label="API Documentation"></div>
+    </main>
+
+    <!-- Footer with additional structured data -->
+    <footer style="display: none;" aria-hidden="true">
+        <div itemscope itemtype="https://schema.org/ContactPoint">
+            <meta itemprop="contactType" content="technical support">
+            <meta itemprop="url" content="https://getanswerlayer.com/contact">
+            <meta itemprop="email" content="support@getanswerlayer.com">
+        </div>
+        
+        <div itemscope itemtype="https://schema.org/Organization">
+            <meta itemprop="name" content="AnswerLayer">
+            <meta itemprop="url" content="https://getanswerlayer.com">
+            <meta itemprop="logo" content="https://getanswerlayer.com/logo.png">
+            <meta itemprop="foundingDate" content="2024">
+            <meta itemprop="description" content="Conversational analytics platform for embedding natural language querying into applications">
+            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                <meta itemprop="addressCountry" content="US">
+            </div>
+        </div>
+    </footer>
 
     <script src="https://unpkg.com/redoc@2.1.3/bundles/redoc.standalone.js"></script>
     <script src="https://unpkg.com/posthog-js@1.255.1/dist/posthog.min.js"></script>
@@ -312,7 +629,7 @@ export default function handler(req, res) {
                                 '[class*="endpoint"]'
                             ],
                             url_allowlist: [
-                                'developers.getanswerlayer.com',
+                                'docs.getanswerlayer.com',
                                 'getanswerlayer.com',
                                 'localhost',
                             ],
@@ -471,8 +788,51 @@ export default function handler(req, res) {
             window.addEventListener('load', () => {
                 window.analytics.track('api_docs_loaded', {
                     load_time: Date.now() - pageStartTime,
-                    page_url: window.location.href
+                    page_url: window.location.href,
+                    referrer: document.referrer,
+                    user_agent: navigator.userAgent,
+                    screen_resolution: screen.width + 'x' + screen.height,
+                    viewport_size: window.innerWidth + 'x' + window.innerHeight,
+                    connection_type: navigator.connection?.effectiveType || 'unknown'
                 });
+
+                // Track SEO/AEO specific metrics
+                window.analytics.track('seo_page_metrics', {
+                    title_length: document.title.length,
+                    meta_description_length: document.querySelector('meta[name="description"]')?.content?.length || 0,
+                    h1_count: document.querySelectorAll('h1').length,
+                    structured_data_count: document.querySelectorAll('script[type="application/ld+json"]').length,
+                    has_canonical: !!document.querySelector('link[rel="canonical"]'),
+                    has_open_graph: !!document.querySelector('meta[property^="og:"]'),
+                    page_language: document.documentElement.lang
+                });
+
+                // Track if page was reached via search engine
+                const searchEngineReferrers = [
+                    'google.com', 'bing.com', 'yahoo.com', 'duckduckgo.com', 
+                    'baidu.com', 'yandex.com', 'perplexity.ai', 'you.com'
+                ];
+                const referrerDomain = document.referrer ? new URL(document.referrer).hostname : '';
+                const fromSearchEngine = searchEngineReferrers.some(se => referrerDomain.includes(se));
+                
+                if (fromSearchEngine) {
+                    window.analytics.track('organic_search_visit', {
+                        search_engine: referrerDomain,
+                        landing_page: window.location.pathname,
+                        query_params: window.location.search
+                    });
+                }
+
+                // Track if accessed via AI answer engine
+                const aiEngineReferrers = ['perplexity.ai', 'you.com', 'phind.com', 'openai.com'];
+                const fromAIEngine = aiEngineReferrers.some(ai => referrerDomain.includes(ai));
+                
+                if (fromAIEngine) {
+                    window.analytics.track('ai_engine_referral', {
+                        ai_engine: referrerDomain,
+                        landing_page: window.location.pathname
+                    });
+                }
             });
 
         })();
@@ -660,7 +1020,20 @@ export default function handler(req, res) {
 </body>
 </html>`;
 
+    // SEO-optimized response headers
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=7200'); // Cache for 1 hour, CDN for 2 hours
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    
+    // Add Vary header for better caching
+    res.setHeader('Vary', 'Accept-Encoding, User-Agent');
+    
+    // Add sitemap reference
+    res.setHeader('Link', '<https://docs.getanswerlayer.com/sitemap.xml>; rel="sitemap"; type="application/xml"');
+    
     res.status(200).send(html);
 } 

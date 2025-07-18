@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    <url>
+        <loc>https://docs.getanswerlayer.com/</loc>
+        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://getanswerlayer.com/og-image.jpg</image:loc>
+            <image:caption>AnswerLayer API Documentation - Conversational Analytics Platform</image:caption>
+            <image:title>AnswerLayer Public API Documentation</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://docs.getanswerlayer.com/v1</loc>
+        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <!-- API endpoint categories for better discovery -->
+    <url>
+        <loc>https://docs.getanswerlayer.com/#tag/Connections</loc>
+        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://docs.getanswerlayer.com/#tag/Semantic-Layer</loc>
+        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://docs.getanswerlayer.com/#tag/Answers</loc>
+        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://docs.getanswerlayer.com/#tag/Admin-Client-Management</loc>
+        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://docs.getanswerlayer.com/#tag/Admin-User-Management</loc>
+        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://docs.getanswerlayer.com/#tag/Chain-Management</loc>
+        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+</urlset> 

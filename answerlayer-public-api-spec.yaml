@@ -3,10 +3,9 @@ info:
   title: AnswerLayer Public API
   description: |
     ## Conversational Analytics Platform
-    
-    AnswerLayer enables organizations to embed conversational analytics directly into their existing product dashboards. 
-    This API allows you to programmatically manage your clients and their users, while providing natural language querying 
-    capabilities over your centralized data warehouse.
+    The AnswerLayer API enables you to add natural language querying and business intelligence to your applications. 
+    Build data-driven customer experiences where users can ask questions in plain English and get instant insights with automatically generated charts, 
+    all while maintaining perfect data isolation between your customers.
     
     ### Architecture
     
