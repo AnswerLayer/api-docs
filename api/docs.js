@@ -244,7 +244,239 @@ export default function handler(req, res) {
     </div>
 
     <script src="https://unpkg.com/redoc@2.1.3/bundles/redoc.standalone.js"></script>
+    <script src="https://unpkg.com/posthog-js@1.255.1/dist/posthog.min.js"></script>
+    <!-- Simple Analytics -->
+    <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
     <script>
+        // Analytics initialization and utilities
+        (function() {
+            // Check if we're on localhost
+            const isLocalhost = () => {
+                const hostname = window.location.hostname;
+                return hostname === 'localhost' || hostname === '127.0.0.1';
+            };
+
+            // PostHog initialization
+            const initializePostHog = () => {
+                // Environment variables injected from Vercel serverless function
+                const posthogKey = '${process.env.VITE_POSTHOG_KEY || ''}';
+                const posthogHost = 'https://us.i.posthog.com';
+                
+                if (!posthogKey) {
+                    console.log('[PostHog] API key not configured, skipping initialization');
+                    return;
+                }
+
+                // Skip PostHog initialization on localhost unless explicitly enabled
+                if (isLocalhost()) {
+                    console.log('[PostHog] Disabled on localhost environment');
+                    return;
+                }
+
+                try {
+                    posthog.init(posthogKey, {
+                        api_host: posthogHost,
+                        person_profiles: 'identified_only', // GDPR compliant
+                        
+                        // Page tracking
+                        capture_pageview: true,
+                        capture_pageleave: true,
+                        capture_dead_clicks: true,
+                        capture_performance: true,
+                        
+                        // Session recordings for UX insights
+                        session_recording: {
+                            recordCrossOriginIframes: false,
+                            maskAllInputs: true,
+                            maskInputOptions: {
+                                password: true,
+                                email: false,
+                                tel: true,
+                            },
+                        },
+                        
+                        // Autocapture events
+                        autocapture: {
+                            css_selector_allowlist: [
+                                'button',
+                                'a',
+                                'input[type="submit"]',
+                                'input[type="button"]',
+                                '[role="button"]',
+                                '.btn',
+                                '[data-track]',
+                                // Redoc specific selectors
+                                '.redoc-wrap *',
+                                '[class*="operation"]',
+                                '[class*="schema"]',
+                                '[class*="endpoint"]'
+                            ],
+                            url_allowlist: [
+                                'developers.getanswerlayer.com',
+                                'getanswerlayer.com',
+                                'localhost',
+                            ],
+                        },
+                        
+                        // Privacy and performance
+                        respect_dnt: true,
+                        opt_out_capturing_by_default: false,
+                        
+                        loaded: (posthog) => {
+                            console.log('[PostHog] Successfully initialized for API docs');
+                            
+                            // Enable debug mode on localhost
+                            if (isLocalhost()) {
+                                posthog.debug();
+                                console.log('[PostHog] Debug mode enabled for localhost');
+                            }
+                        }
+                    });
+
+                    // Track initial page view with context
+                    posthog.capture('api_docs_page_view', {
+                        page_title: document.title,
+                        page_url: window.location.href,
+                        referrer: document.referrer,
+                        user_agent: navigator.userAgent,
+                        timestamp: new Date().toISOString()
+                    });
+
+                } catch (error) {
+                    console.error('[PostHog] Failed to initialize:', error);
+                }
+            };
+
+            // Analytics utility functions
+            window.analytics = {
+                track: (eventName, properties = {}) => {
+                    console.log('[Analytics] Tracking event:', eventName, properties);
+                    
+                    // PostHog tracking
+                    if (typeof posthog !== 'undefined' && posthog.capture) {
+                        posthog.capture(eventName, {
+                            ...properties,
+                            source: 'api_docs',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    
+                    // SimpleAnalytics tracking
+                    if (typeof window.sa_event === 'function') {
+                        try {
+                            window.sa_event(eventName, properties);
+                        } catch (error) {
+                            console.error('[SimpleAnalytics] Error sending event:', error);
+                        }
+                    }
+                },
+
+                // Track API endpoint interactions
+                trackEndpoint: (endpoint, method, action = 'viewed') => {
+                    window.analytics.track('api_endpoint_interaction', {
+                        endpoint: endpoint,
+                        method: method,
+                        action: action,
+                        section: window.analytics.getCurrentSection()
+                    });
+                },
+
+                // Track schema interactions
+                trackSchema: (schemaName, action = 'viewed') => {
+                    window.analytics.track('api_schema_interaction', {
+                        schema: schemaName,
+                        action: action,
+                        section: window.analytics.getCurrentSection()
+                    });
+                },
+
+                // Get current documentation section
+                getCurrentSection: () => {
+                    const hash = window.location.hash;
+                    if (hash.includes('operation/')) {
+                        return 'endpoint';
+                    } else if (hash.includes('schema/')) {
+                        return 'schema';
+                    } else if (hash.includes('tag/')) {
+                        return 'tag';
+                    }
+                    return 'overview';
+                },
+
+                // Track search usage
+                trackSearch: (query, resultsCount = null) => {
+                    window.analytics.track('api_docs_search', {
+                        query: query,
+                        results_count: resultsCount,
+                        section: window.analytics.getCurrentSection()
+                    });
+                },
+
+                // Track external links
+                trackExternalLink: (url, linkText = '') => {
+                    window.analytics.track('api_docs_external_link', {
+                        destination_url: url,
+                        link_text: linkText,
+                        source_section: window.analytics.getCurrentSection()
+                    });
+                }
+            };
+
+            // Initialize analytics
+            initializePostHog();
+
+            // Track hash changes (navigation within docs)
+            let lastHash = window.location.hash;
+            const trackHashChange = () => {
+                const currentHash = window.location.hash;
+                if (currentHash !== lastHash) {
+                    window.analytics.track('api_docs_navigation', {
+                        from_hash: lastHash,
+                        to_hash: currentHash,
+                        from_section: window.analytics.getCurrentSection(),
+                        navigation_type: 'hash_change'
+                    });
+                    lastHash = currentHash;
+                }
+            };
+
+            // Listen for hash changes
+            window.addEventListener('hashchange', trackHashChange);
+
+            // Track clicks on external links
+            document.addEventListener('click', (event) => {
+                const link = event.target.closest('a');
+                if (link && link.href) {
+                    const url = new URL(link.href);
+                    const currentDomain = window.location.hostname;
+                    
+                    // Track external links
+                    if (url.hostname !== currentDomain && url.hostname !== '') {
+                        window.analytics.trackExternalLink(link.href, link.textContent || '');
+                    }
+                }
+            });
+
+            // Track time spent on page
+            let pageStartTime = Date.now();
+            window.addEventListener('beforeunload', () => {
+                const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
+                window.analytics.track('api_docs_session_end', {
+                    time_spent_seconds: timeSpent,
+                    final_section: window.analytics.getCurrentSection()
+                });
+            });
+
+            // Track successful API spec load
+            window.addEventListener('load', () => {
+                window.analytics.track('api_docs_loaded', {
+                    load_time: Date.now() - pageStartTime,
+                    page_url: window.location.href
+                });
+            });
+
+        })();
+
         // Initialize Redoc with AnswerLayer brand styling
         Redoc.init(
             '../answerlayer-public-api-spec.yaml',
@@ -370,7 +602,60 @@ export default function handler(req, res) {
                 usePathOperationAsName: false
             },
             document.getElementById('redoc-container')
-        );
+        ).then(() => {
+            // Track successful Redoc initialization
+            if (window.analytics) {
+                window.analytics.track('api_docs_redoc_initialized', {
+                    spec_url: '../answerlayer-public-api-spec.yaml',
+                    initialization_time: Date.now() - pageStartTime
+                });
+            }
+
+            // Add additional analytics hooks after Redoc loads
+            setTimeout(() => {
+                // Track API section interactions
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'childList') {
+                            // Check for operation clicks
+                            mutation.addedNodes.forEach((node) => {
+                                if (node.nodeType === 1 && node.classList) {
+                                    if (node.classList.contains('operation') || 
+                                        node.querySelector && node.querySelector('.operation')) {
+                                        // Operation expanded/viewed
+                                        const operationElement = node.classList.contains('operation') ? node : node.querySelector('.operation');
+                                        if (operationElement) {
+                                            const method = operationElement.querySelector('[class*="method"]')?.textContent;
+                                            const endpoint = operationElement.querySelector('[class*="path"]')?.textContent;
+                                            if (method && endpoint && window.analytics) {
+                                                window.analytics.trackEndpoint(endpoint, method, 'expanded');
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+
+                // Start observing
+                const redocContainer = document.getElementById('redoc-container');
+                if (redocContainer) {
+                    observer.observe(redocContainer, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
+            }, 1000);
+        }).catch((error) => {
+            console.error('[Redoc] Failed to initialize:', error);
+            if (window.analytics) {
+                window.analytics.track('api_docs_redoc_error', {
+                    error_message: error.message,
+                    spec_url: '../answerlayer-public-api-spec.yaml'
+                });
+            }
+        });
     </script>
 </body>
 </html>`;
