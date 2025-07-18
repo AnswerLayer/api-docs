@@ -191,6 +191,112 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /connections/{connection_id}/pii/detect:
+    post:
+      summary: Detect PII in database columns
+      description: |
+        Analyze database columns using AI to automatically detect personally identifiable information (PII).
+        This helps identify sensitive data that should be filtered from query results.
+      operationId: detectPII
+      tags:
+        - Connections
+      parameters:
+        - name: connection_id
+          in: path
+          required: true
+          description: Database connection ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PIIDetectionRequest'
+      responses:
+        '200':
+          description: PII detection completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PIIDetectionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /connections/{connection_id}/pii/settings:
+    put:
+      summary: Update PII settings for columns
+      description: |
+        Bulk update PII filtering settings for multiple database columns. 
+        Allows overriding AI detection results or manually marking columns as PII/safe.
+      operationId: updatePIISettings
+      tags:
+        - Connections
+      parameters:
+        - name: connection_id
+          in: path
+          required: true
+          description: Database connection ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PIIBulkUpdateRequest'
+      responses:
+        '200':
+          description: PII settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PIIUpdateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /connections/{connection_id}/pii/summary:
+    get:
+      summary: Get PII protection summary
+      description: |
+        Get a summary of PII protection status for a database connection,
+        including column counts and detection statistics.
+      operationId: getPIISummary
+      tags:
+        - Connections
+      parameters:
+        - name: connection_id
+          in: path
+          required: true
+          description: Database connection ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: PII summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PIISummaryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # Semantic Layer - Entities
   /semantic/entities/generate:
     post:
@@ -2524,6 +2630,241 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Connection'
+
+    # PII Detection and Management Schemas
+    PIIDetectionRequest:
+      type: object
+      required:
+        - connection_id
+      properties:
+        connection_id:
+          type: string
+          description: ID of the database connection to analyze
+          example: "conn_123"
+        force_redetection:
+          type: boolean
+          default: false
+          description: Force re-detection even if columns already have PII settings
+
+    PIIDetectionResult:
+      type: object
+      required:
+        - column_id
+        - column_name
+        - table_name
+        - data_type
+        - is_pii_detected
+        - current_status
+      properties:
+        column_id:
+          type: string
+          description: ID of the database column
+          example: "col_456"
+        column_name:
+          type: string
+          description: Name of the column
+          example: "email"
+        table_name:
+          type: string
+          description: Name of the table containing the column
+          example: "users"
+        data_type:
+          type: string
+          description: Data type of the column
+          example: "VARCHAR"
+        is_pii_detected:
+          type: boolean
+          description: Whether PII was detected in this column
+          example: true
+        confidence:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          description: AI confidence score (0.0 to 1.0)
+          example: 0.95
+        reasoning:
+          type: string
+          description: AI explanation for the detection decision
+          example: "Column contains email addresses which are considered PII"
+        current_status:
+          type: boolean
+          description: Current PII filtering status
+          example: false
+        detection_method:
+          type: string
+          enum: ["ai_detected", "user_set", "user_override_safe", "user_override_pii"]
+          description: Current detection method
+          example: "ai_detected"
+
+    PIIDetectionResponse:
+      type: object
+      required:
+        - connection_id
+        - total_columns
+        - analyzed_count
+        - pii_detected_count
+        - results
+        - detection_completed_at
+      properties:
+        connection_id:
+          type: string
+          description: ID of the analyzed connection
+          example: "conn_123"
+        total_columns:
+          type: integer
+          description: Total number of columns in the database
+          example: 150
+        analyzed_count:
+          type: integer
+          description: Number of columns actually analyzed by AI
+          example: 150
+        pii_detected_count:
+          type: integer
+          description: Number of columns where PII was detected
+          example: 12
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PIIDetectionResult'
+          description: Detailed results for each column
+        detection_completed_at:
+          type: string
+          format: date-time
+          description: Timestamp when detection was completed
+          example: "2024-01-15T10:30:00Z"
+
+    PIIColumnUpdate:
+      type: object
+      required:
+        - column_id
+        - is_pii_filtered
+        - detection_method
+      properties:
+        column_id:
+          type: string
+          description: ID of the database column
+          example: "col_456"
+        is_pii_filtered:
+          type: boolean
+          description: Whether this column should be filtered as PII
+          example: true
+        detection_method:
+          type: string
+          enum: ["ai_detected", "user_set", "user_override_safe", "user_override_pii"]
+          description: Method used to set PII status
+          example: "user_override_pii"
+        pii_confidence:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          description: AI confidence score (preserved for AI detections)
+          example: 0.95
+        pii_reasoning:
+          type: string
+          description: AI explanation for PII detection (preserved for AI detections)
+          example: "Column contains email addresses which are considered PII"
+
+    PIIBulkUpdateRequest:
+      type: object
+      required:
+        - connection_id
+        - column_updates
+      properties:
+        connection_id:
+          type: string
+          description: ID of the database connection
+          example: "conn_123"
+        column_updates:
+          type: array
+          items:
+            $ref: '#/components/schemas/PIIColumnUpdate'
+          description: List of column PII updates
+          minItems: 1
+
+    PIIUpdateResponse:
+      type: object
+      required:
+        - connection_id
+        - updated_columns
+        - total_updated
+        - updated_at
+      properties:
+        connection_id:
+          type: string
+          description: ID of the database connection
+          example: "conn_123"
+        updated_columns:
+          type: array
+          items:
+            type: object
+            properties:
+              column_id:
+                type: string
+                example: "col_456"
+              column_name:
+                type: string
+                example: "email"
+              table_name:
+                type: string
+                example: "users"
+              is_pii_filtered:
+                type: boolean
+                example: true
+              detection_method:
+                type: string
+                example: "user_override_pii"
+          description: Details of updated columns
+        total_updated:
+          type: integer
+          description: Number of columns updated
+          example: 5
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when update was completed
+          example: "2024-01-15T10:35:00Z"
+
+    PIISummaryResponse:
+      type: object
+      required:
+        - connection_id
+        - connection_name
+        - total_columns
+        - pii_filtered_columns
+        - ai_detected_columns
+        - user_set_columns
+      properties:
+        connection_id:
+          type: string
+          description: ID of the database connection
+          example: "conn_123"
+        connection_name:
+          type: string
+          description: Name of the database connection
+          example: "Production Analytics DB"
+        total_columns:
+          type: integer
+          description: Total number of columns in the connection
+          example: 150
+        pii_filtered_columns:
+          type: integer
+          description: Number of columns currently filtered as PII
+          example: 12
+        ai_detected_columns:
+          type: integer
+          description: Number of columns detected as PII by AI
+          example: 10
+        user_set_columns:
+          type: integer
+          description: Number of columns manually marked as PII by users
+          example: 2
+        last_detection_run:
+          type: string
+          format: date-time
+          description: Timestamp of last PII detection run
+          example: "2024-01-15T10:30:00Z"
 
     AnalyzeSchemaRequest:
       type: object
