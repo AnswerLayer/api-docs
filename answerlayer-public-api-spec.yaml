@@ -72,7 +72,7 @@ info:
     }
     ```
 
-  version: 1.0.0
+  version: Alpha
   contact:
     name: AnswerLayer API Support
     email: josh@getanswerlayer.com
