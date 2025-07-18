@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
     <url>
         <loc>https://docs.getanswerlayer.com/</loc>
-        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <lastmod>2025-07-18T00:00:00Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
         <image:image>
@@ -21,37 +21,37 @@
     <!-- API endpoint categories for better discovery -->
     <url>
         <loc>https://docs.getanswerlayer.com/#tag/Connections</loc>
-        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <lastmod>2025-07-18T00:00:00Z</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://docs.getanswerlayer.com/#tag/Semantic-Layer</loc>
-        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <lastmod>2025-07-18T00:00:00Z</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://docs.getanswerlayer.com/#tag/Answers</loc>
-        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <lastmod>2025-07-18T00:00:00Z</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://docs.getanswerlayer.com/#tag/Admin-Client-Management</loc>
-        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <lastmod>2025-07-18T00:00:00Z</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://docs.getanswerlayer.com/#tag/Admin-User-Management</loc>
-        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <lastmod>2025-07-18T00:00:00Z</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://docs.getanswerlayer.com/#tag/Chain-Management</loc>
-        <lastmod>2024-01-15T00:00:00Z</lastmod>
+        <lastmod>2025-07-18T00:00:00Z</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
