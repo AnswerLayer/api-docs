@@ -15,6 +15,7 @@ info:
     ```
     Your Organization (API Customer)
     ├── Database Connections (Your Data Warehouse)
+    ├── Semantic Layer (How Data is Understood)
     ├── Clients (Your Customers)
     │   ├── Users (Individuals using your product)
     │   ├── Answers & Chains of Answers (Auto-scoped to client data)
@@ -22,19 +23,30 @@ info:
     └── API Keys & Authentication
     ```
 
+    ### Semantic Layer
+    
+    The semantic layer translates between your database schema and business concepts, enabling more accurate and 
+    consistent natural language querying. It defines:
+    - **Entities**: Core business objects (customers, orders, products)
+    - **Relationships**: How entities connect
+    - **Dimensions**: How to group and segment data
+    - **Measures**: What to count or sum
+    - **Metrics**: Calculated business KPIs
+    - **Filters**: Common data scoping rules
+
     ### Privacy
 
     AnswerLayer is PII-aware and will never store or access any PII data. 
-    It intelligently detects which columns contian sensitive data and protects them as the source, never allowing sensitive data to leave your systems
-
+    It intelligently detects which columns contain sensitive data and protects them at the source, never allowing sensitive data to leave your systems.
     
     ### Use Case Example
     
     Use AnswerLayer to:
-    1. Connect a usage analytics database containing all client data
-    2. Register client records for each customer  
-    3. Embed conversational analytics into your customer dashboard
-    4. Allow each customer to ask questions about their own usage data
+    1. Connect your data warehouse containing all client data
+    2. Generate or define a semantic layer to describe your data model
+    3. Register client records for each customer  
+    4. Embed conversational analytics into your customer dashboard
+    5. Allow each customer to ask questions about their own usage data
     
     AnswerLayer automatically ensures data isolation - each client only sees their own data.
     
@@ -60,7 +72,7 @@ info:
     }
     ```
 
-  version: alpha
+  version: 1.0.0
   contact:
     name: AnswerLayer API Support
     email: josh@getanswerlayer.com
@@ -76,6 +88,211 @@ security:
   - ApiKeyAuth: []
 
 paths:
+  # Semantic Layer Management
+  /semantic-layers/generate:
+    post:
+      summary: Generate semantic layer from schema
+      description: |
+        Automatically generate a semantic layer by analyzing your database schema. 
+        Uses AI to identify entities, relationships, and suggest meaningful metrics based on your data structure.
+      operationId: generateSemanticLayer
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateSemanticLayerRequest'
+            examples:
+              basic:
+                summary: Basic generation
+                value:
+                  connection_id: "conn_123"
+                  options:
+                    auto_discover_metrics: true
+                    include_common_filters: true
+              with_hints:
+                summary: Generation with business context
+                value:
+                  connection_id: "conn_123"
+                  options:
+                    auto_discover_metrics: true
+                    include_common_filters: true
+                    industry: "e-commerce"
+                    key_metrics: ["revenue", "customer_retention"]
+      responses:
+        '201':
+          description: Semantic layer generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateSemanticLayerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /semantic-layers:
+    post:
+      summary: Create or update semantic layer
+      description: |
+        Create a new semantic layer or update the existing one. 
+        The semantic layer defines how your data model maps to business concepts.
+      operationId: createSemanticLayer
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSemanticLayerRequest'
+      responses:
+        '201':
+          description: Semantic layer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SemanticLayer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    get:
+      summary: List semantic layer versions
+      description: Retrieve all versions of your semantic layer
+      operationId: listSemanticLayers
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: List of semantic layer versions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SemanticLayerList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /semantic-layers/current:
+    get:
+      summary: Get current semantic layer
+      description: Retrieve the currently active semantic layer
+      operationId: getCurrentSemanticLayer
+      tags:
+        - Semantic Layer
+      responses:
+        '200':
+          description: Current semantic layer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SemanticLayer'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /semantic-layers/test:
+    post:
+      summary: Test semantic layer
+      description: |
+        Test your semantic layer with sample questions to ensure it correctly 
+        interprets natural language queries and generates appropriate SQL.
+      operationId: testSemanticLayer
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestSemanticLayerRequest'
+      responses:
+        '200':
+          description: Test results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestSemanticLayerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # Connection Management
+  /connections:
+    get:
+      summary: List database connections
+      description: List all configured database connections
+      operationId: listConnections
+      tags:
+        - Connections
+      responses:
+        '200':
+          description: List of connections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /connections/{connection_id}/analyze:
+    post:
+      summary: Analyze database schema
+      description: |
+        Analyze a database connection to understand its schema, relationships, 
+        and data patterns. Used for semantic layer generation.
+      operationId: analyzeSchema
+      tags:
+        - Connections
+      parameters:
+        - name: connection_id
+          in: path
+          required: true
+          description: Database connection ID
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeSchemaRequest'
+      responses:
+        '200':
+          description: Schema analysis results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaAnalysis'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # Admin Endpoints - Client Management
   /admin/clients:
     post:
@@ -90,15 +307,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateClientRequest'
-          examples:
-            basic_client:
-              summary: Basic client creation
-              value:
-                name: "Customer Analytics Dashboard"
-                description: "Analytics dashboard for customer insights"
-                domain: "dashboard.acme.com"
-                settings:
-                  max_users: 100
       responses:
         '201':
           description: Client created successfully
@@ -407,8 +615,10 @@ paths:
   # Answer Endpoints
   /answer:
     post:
-      summary:  Get answer
-      description: Get an answer to a natural language question
+      summary: Get answer
+      description: |
+        Get an answer to a natural language question. The semantic layer is automatically 
+        applied to improve query accuracy and ensure proper data scoping.
       operationId: getAnswer
       tags:
         - Answers
@@ -425,15 +635,8 @@ paths:
                   question: "Why did our costs increase last quarter?"
                   client_id: "client_123"
                   user_id: "user_456"
-                  context: {
-                    instructions: "Help the user understand their billing history",
-                    notes: "The user is on the /billing page",
-                    timezone: "America/New_York",
-                    preferences: {
-                      chart_type: "auto",
-                      format: "detailed"
-                    }
-                  }
+                  context:
+                    timezone: "America/New_York"
               follow_up:
                 summary: Follow-up question
                 value:
@@ -441,15 +644,15 @@ paths:
                   client_id: "client_123"
                   user_id: "user_456"
                   chain_id: "chain_789"
-                  context: {
-                    instructions: "Help the user understand their billing history",
-                    notes: "The user is on the /billing page",
-                    timezone: "America/New_York",
-                    preferences: {
-                      chart_type: "auto",
-                      format: "detailed"
-                    }
-                  }
+              with_options:
+                summary: With execution options
+                value:
+                  question: "What's our revenue this month?"
+                  client_id: "client_123"
+                  user_id: "user_456"
+                  options:
+                    include_sql: true
+                    include_semantic_trace: true
       responses:
         '201':
           description: Answer processed successfully
@@ -650,6 +853,98 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Analytics Endpoints
+  /analytics/semantic-usage:
+    get:
+      summary: Get semantic layer usage statistics
+      description: |
+        Analyze how your semantic layer is being used. Helps identify popular metrics,
+        unused objects, and common question patterns to improve your semantic model.
+      operationId: getSemanticUsage
+      tags:
+        - Analytics
+      parameters:
+        - name: start_date
+          in: query
+          description: Start date for analysis period (ISO 8601)
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2024-01-01"
+        - name: end_date
+          in: query
+          description: End date for analysis period (ISO 8601)
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2024-01-31"
+        - name: group_by
+          in: query
+          description: Time grouping for metrics
+          required: false
+          schema:
+            type: string
+            enum: ["day", "week", "month"]
+            default: "day"
+      responses:
+        '200':
+          description: Semantic usage statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SemanticUsageStats'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /analytics/failed-queries:
+    get:
+      summary: Get failed queries
+      description: |
+        Retrieve queries that failed to execute or returned no results. 
+        Use this to identify gaps in your semantic layer and improve coverage.
+      operationId: getFailedQueries
+      tags:
+        - Analytics
+      parameters:
+        - name: start_date
+          in: query
+          description: Start date for analysis period (ISO 8601)
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          description: End date for analysis period (ISO 8601)
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          description: Maximum number of failed queries to return
+          required: false
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 200
+      responses:
+        '200':
+          description: Failed query analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedQueries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -659,6 +954,587 @@ components:
       description: API key authentication. Include your API key in the Authorization header as a Bearer token.
 
   schemas:
+    # Semantic Layer Schemas
+    SemanticLayerDefinition:
+      type: object
+      description: Complete semantic layer definition
+      properties:
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        relationships:
+          type: array
+          items:
+            $ref: '#/components/schemas/Relationship'
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Filter'
+        dimensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dimension'
+        measures:
+          type: array
+          items:
+            $ref: '#/components/schemas/Measure'
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Metric'
+
+    Entity:
+      type: object
+      required:
+        - name
+        - source_table
+        - identifier
+      properties:
+        name:
+          type: string
+          description: Business-friendly name for the entity
+          example: "customer"
+        source_table:
+          type: string
+          description: Database table name
+          example: "users"
+        identifier:
+          type: string
+          description: Primary key column
+          example: "user_id"
+        temporal_key:
+          type: string
+          description: Optional timestamp column for event entities
+          example: "created_at"
+        description:
+          type: string
+          description: Human-readable description
+          example: "Customer master data"
+
+    Relationship:
+      type: object
+      required:
+        - name
+        - from_entity
+        - to_entity
+        - join_keys
+      properties:
+        name:
+          type: string
+          example: "customer_placed_order"
+        from_entity:
+          type: string
+          example: "customer"
+        to_entity:
+          type: string
+          example: "order"
+        join_keys:
+          type: object
+          properties:
+            from:
+              type: string
+              example: "user_id"
+            to:
+              type: string
+              example: "customer_id"
+        cardinality:
+          type: string
+          enum: ["one_to_one", "one_to_many", "many_to_many"]
+          example: "one_to_many"
+
+    Filter:
+      type: object
+      required:
+        - name
+        - entity
+        - condition
+      properties:
+        name:
+          type: string
+          example: "completed_orders"
+        entity:
+          type: string
+          example: "order"
+        condition:
+          type: string
+          description: SQL condition
+          example: "status = 'completed'"
+        parameters:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum: ["string", "number", "date", "boolean"]
+              default:
+                type: string
+        description:
+          type: string
+
+    Dimension:
+      type: object
+      required:
+        - name
+        - entity
+        - expression
+      properties:
+        name:
+          type: string
+          example: "customer_segment"
+        entity:
+          type: string
+          example: "customer"
+        expression:
+          type: string
+          description: SQL expression
+          example: "CASE WHEN lifetime_value > 1000 THEN 'high_value' ELSE 'standard' END"
+        description:
+          type: string
+
+    Measure:
+      type: object
+      required:
+        - name
+        - expression
+        - aggregation
+        - entity
+      properties:
+        name:
+          type: string
+          example: "revenue"
+        expression:
+          type: string
+          example: "SUM(order_total)"
+        aggregation:
+          type: string
+          enum: ["sum", "count", "avg", "min", "max"]
+        entity:
+          type: string
+          example: "order"
+        default_filters:
+          type: array
+          items:
+            type: string
+          example: ["completed_orders"]
+        description:
+          type: string
+
+    Metric:
+      type: object
+      required:
+        - name
+        - formula
+      properties:
+        name:
+          type: string
+          example: "average_order_value"
+        formula:
+          type: string
+          description: Expression using measures
+          example: "revenue / order_count"
+        required_filters:
+          type: array
+          items:
+            type: string
+        recommended_filters:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        example_questions:
+          type: array
+          items:
+            type: string
+          example: ["What's our average order value?", "How has AOV changed over time?"]
+
+    GenerateSemanticLayerRequest:
+      type: object
+      required:
+        - connection_id
+      properties:
+        connection_id:
+          type: string
+          description: Database connection to analyze
+          example: "conn_123"
+        options:
+          type: object
+          properties:
+            auto_discover_metrics:
+              type: boolean
+              default: true
+              description: Automatically suggest common metrics based on data patterns
+            include_common_filters:
+              type: boolean
+              default: true
+              description: Include standard time-based and status filters
+            industry:
+              type: string
+              description: Industry context for better metric suggestions
+              example: "e-commerce"
+            key_metrics:
+              type: array
+              items:
+                type: string
+              description: Hint about important business metrics
+              example: ["revenue", "customer_retention", "churn_rate"]
+            tables:
+              type: array
+              items:
+                type: string
+              description: Specific tables to analyze (analyzes all if not specified)
+              example: ["orders", "customers", "products"]
+
+    GenerateSemanticLayerResponse:
+      type: object
+      properties:
+        draft_id:
+          type: string
+          description: ID of the generated draft
+          example: "draft_456"
+        semantic_layer:
+          $ref: '#/components/schemas/SemanticLayerDefinition'
+        suggestions:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: ["metric", "dimension", "filter"]
+              name:
+                type: string
+              reason:
+                type: string
+                example: "Common e-commerce metric based on your order data"
+        generation_metadata:
+          type: object
+          properties:
+            tables_analyzed:
+              type: integer
+            relationships_discovered:
+              type: integer
+            metrics_created:
+              type: integer
+            confidence_score:
+              type: number
+              description: 0-1 confidence in the generated model
+              example: 0.85
+
+    CreateSemanticLayerRequest:
+      type: object
+      required:
+        - semantic_layer
+      properties:
+        semantic_layer:
+          $ref: '#/components/schemas/SemanticLayerDefinition'
+        validate:
+          type: boolean
+          default: true
+          description: Validate against current database schema
+        description:
+          type: string
+          description: Version description or change notes
+          example: "Added customer segmentation dimensions"
+
+    SemanticLayer:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "sl_789"
+        version:
+          type: integer
+          example: 1
+        status:
+          type: string
+          enum: ["draft", "active", "archived"]
+          example: "active"
+        semantic_layer:
+          $ref: '#/components/schemas/SemanticLayerDefinition'
+        validation_results:
+          type: object
+          properties:
+            valid:
+              type: boolean
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: "invalid_reference"
+                  message:
+                    type: string
+                    example: "Entity 'customer' references non-existent table 'users'"
+                  location:
+                    type: string
+                    example: "entities[0].source_table"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+          example: "user_admin"
+
+    SemanticLayerList:
+      type: object
+      properties:
+        versions:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              version:
+                type: integer
+              status:
+                type: string
+                enum: ["draft", "active", "archived"]
+              description:
+                type: string
+              created_at:
+                type: string
+                format: date-time
+              created_by:
+                type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    TestSemanticLayerRequest:
+      type: object
+      required:
+        - test_questions
+      properties:
+        semantic_layer_id:
+          type: string
+          description: ID of semantic layer to test (uses current if not specified)
+          example: "sl_789"
+        semantic_layer:
+          $ref: '#/components/schemas/SemanticLayerDefinition'
+          description: Inline semantic layer definition (alternative to ID)
+        test_questions:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 20
+          example: 
+            - "What's our revenue this month?"
+            - "Show me top customers by order count"
+            - "What's the average order value by product category?"
+        include_sql:
+          type: boolean
+          default: true
+          description: Include generated SQL in results
+
+    TestSemanticLayerResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+              status:
+                type: string
+                enum: ["success", "partial_success", "failure"]
+              semantic_objects_used:
+                type: array
+                items:
+                  type: string
+                example: ["metric.revenue", "filter.current_month", "dimension.product_category"]
+              generated_sql:
+                type: string
+                example: "SELECT SUM(order_total) as revenue FROM orders WHERE..."
+              execution_time_ms:
+                type: number
+                example: 45
+              error:
+                type: string
+                description: Error message if status is failure
+              suggestions:
+                type: array
+                items:
+                  type: string
+                description: Suggestions for missing semantic objects
+                example: ["Consider adding a 'current_month' filter for time-based queries"]
+        summary:
+          type: object
+          properties:
+            total_tests:
+              type: integer
+            successful:
+              type: integer
+            failed:
+              type: integer
+            coverage_percentage:
+              type: number
+              description: Percentage of semantic objects used in tests
+              example: 75.5
+
+    # Connection Schemas
+    Connection:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "conn_123"
+        name:
+          type: string
+          example: "Production Analytics DB"
+        type:
+          type: string
+          enum: ["postgresql", "mysql", "snowflake", "bigquery", "redshift"]
+          example: "postgresql"
+        status:
+          type: string
+          enum: ["active", "inactive", "error"]
+          example: "active"
+        created_at:
+          type: string
+          format: date-time
+
+    ConnectionList:
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Connection'
+
+    AnalyzeSchemaRequest:
+      type: object
+      properties:
+        include_sample_data:
+          type: boolean
+          default: true
+          description: Include sample values for columns
+        sample_size:
+          type: integer
+          default: 100
+          minimum: 10
+          maximum: 1000
+          description: Number of sample rows to analyze
+        tables:
+          type: array
+          items:
+            type: string
+          description: Specific tables to analyze (all if not specified)
+
+    SchemaAnalysis:
+      type: object
+      properties:
+        tables:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "orders"
+              columns:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    type:
+                      type: string
+                    is_primary_key:
+                      type: boolean
+                    is_foreign_key:
+                      type: boolean
+                    references:
+                      type: string
+                      example: "customers.id"
+                    is_nullable:
+                      type: boolean
+                    sample_values:
+                      type: array
+                      items: {}
+                    value_patterns:
+                      type: object
+                      properties:
+                        min:
+                          type: string
+                        max:
+                          type: string
+                        unique_count:
+                          type: integer
+                        null_percentage:
+                          type: number
+                        distribution:
+                          type: string
+                          enum: ["uniform", "normal", "skewed_left", "skewed_right"]
+              row_count:
+                type: integer
+              indexes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    columns:
+                      type: array
+                      items:
+                        type: string
+                    type:
+                      type: string
+        recommendations:
+          type: object
+          properties:
+            fact_tables:
+              type: array
+              items:
+                type: string
+              description: Tables that appear to be fact tables
+            dimension_tables:
+              type: array
+              items:
+                type: string
+              description: Tables that appear to be dimensions
+            suggested_relationships:
+              type: array
+              items:
+                type: object
+                properties:
+                  from_table:
+                    type: string
+                  to_table:
+                    type: string
+                  join_key:
+                    type: string
+                  confidence:
+                    type: number
+            suggested_metrics:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  based_on:
+                    type: string
+                    description: Column this metric is based on
+                  aggregation:
+                    type: string
+                  reason:
+                    type: string
+
     # Client Management Schemas
     CreateClientRequest:
       type: object
@@ -862,17 +1738,40 @@ components:
           type: object
           description: Additional context for the question
           properties:
-            body:
+            timezone:
+              type: string
+              description: User's timezone for date calculations
+              example: "America/New_York"
+            fiscal_calendar:
               type: object
-              description: Any page context, or other information that may be relevant to the question
-              example: {
-                "body": "The user is on the /billing page",
-                "timezone": "America/New_York",
-                "preferences": {
-                  "chart_type": "auto",
-                  "format": "detailed"
-                }
-              }
+              properties:
+                fiscal_year_start:
+                  type: string
+                  description: Start of fiscal year (MM-DD)
+                  example: "02-01"
+            page_context:
+              type: object
+              description: Context about where the user is in your application
+        options:
+          type: object
+          description: Execution options
+          properties:
+            include_sql:
+              type: boolean
+              default: false
+              description: Include generated SQL in response
+            include_semantic_trace:
+              type: boolean
+              default: false
+              description: Include semantic objects used
+            dry_run:
+              type: boolean
+              default: false
+              description: Generate SQL without executing
+            max_rows:
+              type: integer
+              default: 1000
+              description: Maximum rows to return
 
     Answer:
       type: object
@@ -895,7 +1794,7 @@ components:
           example: "Based on your Q3 2024 data, here are the top 5 products by revenue..."
         sql_query:
           type: string
-          description: SQL query that was executed
+          description: SQL query that was executed (if include_sql was true)
           example: "SELECT product_name, SUM(revenue) as total_revenue FROM sales WHERE quarter = 'Q3' AND year = 2024 GROUP BY product_name ORDER BY total_revenue DESC LIMIT 5"
         data:
           type: object
@@ -911,18 +1810,44 @@ components:
               items:
                 type: array
               example: [["Widget A", 125000], ["Widget B", 98000], ["Widget C", 87000]]
+        semantic_trace:
+          type: object
+          description: Semantic objects used (if include_semantic_trace was true)
+          properties:
+            metrics_used:
+              type: array
+              items:
+                type: string
+              example: ["revenue"]
+            dimensions_used:
+              type: array
+              items:
+                type: string
+              example: ["product_name"]
+            filters_applied:
+              type: array
+              items:
+                type: string
+              example: ["last_quarter", "completed_orders"]
+            semantic_layer_version:
+              type: integer
+              example: 1
         metadata:
           type: object
           description: Additional metadata about the answer
           properties:
-            execution_time:
+            execution_time_ms:
               type: number
-              description: Query execution time in seconds
-              example: 0.245
-            row_count:
+              description: Query execution time in milliseconds
+              example: 245
+            rows_scanned:
               type: integer
-              description: Number of rows returned
-              example: 5
+              description: Number of rows scanned
+              example: 50000
+            cache_hit:
+              type: boolean
+              description: Whether results were served from cache
+              example: false
         created_at:
           type: string
           format: date-time
@@ -935,10 +1860,6 @@ components:
           type: string
           description: ID of the user who asked the question
           example: "user_456"
-        credit_usage:
-          type: number
-          description: Amount of credits used to generate the answer
-          example: 0.01
 
     RequestChartRequest:
       type: object
@@ -1075,6 +1996,135 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
 
+    # Analytics Schemas
+    SemanticUsageStats:
+      type: object
+      properties:
+        period:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date
+            end:
+              type: string
+              format: date
+        usage:
+          type: object
+          properties:
+            total_questions:
+              type: integer
+              example: 1523
+            unique_users:
+              type: integer
+              example: 47
+            unique_clients:
+              type: integer
+              example: 12
+            avg_response_time_ms:
+              type: number
+              example: 312
+        popular_metrics:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              usage_count:
+                type: integer
+              percentage_of_queries:
+                type: number
+        popular_dimensions:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              usage_count:
+                type: integer
+        unused_objects:
+          type: array
+          description: Semantic objects that haven't been used
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: ["entity", "metric", "dimension", "filter"]
+              name:
+                type: string
+              last_used:
+                type: string
+                format: date-time
+                nullable: true
+        common_question_patterns:
+          type: array
+          items:
+            type: object
+            properties:
+              pattern:
+                type: string
+                example: "revenue by {dimension}"
+              count:
+                type: integer
+              example_questions:
+                type: array
+                items:
+                  type: string
+
+    FailedQueries:
+      type: object
+      properties:
+        failed_queries:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+                example: "What's our churn rate?"
+              error:
+                type: string
+                example: "No metric found for 'churn rate'"
+              error_type:
+                type: string
+                enum: ["missing_semantic_object", "invalid_syntax", "permission_denied", "execution_error"]
+              timestamp:
+                type: string
+                format: date-time
+              client_id:
+                type: string
+              user_id:
+                type: string
+              suggested_fix:
+                type: object
+                description: AI-suggested solution
+                properties:
+                  type:
+                    type: string
+                    enum: ["add_metric", "add_dimension", "add_filter", "modify_existing"]
+                  suggestion:
+                    type: object
+                    example:
+                      name: "churn_rate"
+                      formula: "customers_lost / customers_start_of_period"
+                      description: "Percentage of customers who stopped using the service"
+        summary:
+          type: object
+          properties:
+            total_failed:
+              type: integer
+            by_error_type:
+              type: object
+              additionalProperties:
+                type: integer
+            most_common_missing_concepts:
+              type: array
+              items:
+                type: string
+
     # Common Schemas
     Pagination:
       type: object
@@ -1201,12 +2251,20 @@ components:
               details: "You have exceeded the rate limit. Please try again later"
 
 tags:
+  - name: Semantic Layer
+    description: |
+      Manage your semantic layer to define how data is understood. The semantic layer 
+      translates between database schemas and business concepts, enabling more accurate 
+      natural language querying.
+  - name: Connections
+    description: Manage database connections and analyze schemas
   - name: Answers
     description: Natural language question processing and answer generation
   - name: Chain Management
-    description: Operations for managing conversation chains 
+    description: Operations for managing conversation chains
+  - name: Analytics
+    description: Usage analytics and query performance insights
   - name: Admin - Client Management
     description: Operations for managing clients
   - name: Admin - User Management
     description: Operations for managing client users
-
