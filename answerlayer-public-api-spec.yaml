@@ -88,159 +88,6 @@ security:
   - ApiKeyAuth: []
 
 paths:
-  # Semantic Layer Management
-  /semantic-layers/generate:
-    post:
-      summary: Generate semantic layer from schema
-      description: |
-        Automatically generate a semantic layer by analyzing your database schema. 
-        Uses AI to identify entities, relationships, and suggest meaningful metrics based on your data structure.
-      operationId: generateSemanticLayer
-      tags:
-        - Semantic Layer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GenerateSemanticLayerRequest'
-            examples:
-              basic:
-                summary: Basic generation
-                value:
-                  connection_id: "conn_123"
-                  options:
-                    auto_discover_metrics: true
-                    include_common_filters: true
-              with_hints:
-                summary: Generation with business context
-                value:
-                  connection_id: "conn_123"
-                  options:
-                    auto_discover_metrics: true
-                    include_common_filters: true
-                    industry: "e-commerce"
-                    key_metrics: ["revenue", "customer_retention"]
-      responses:
-        '201':
-          description: Semantic layer generated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenerateSemanticLayerResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-
-  /semantic-layers:
-    post:
-      summary: Create or update semantic layer
-      description: |
-        Create a new semantic layer or update the existing one. 
-        The semantic layer defines how your data model maps to business concepts.
-      operationId: createSemanticLayer
-      tags:
-        - Semantic Layer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateSemanticLayerRequest'
-      responses:
-        '201':
-          description: Semantic layer created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SemanticLayer'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    
-    get:
-      summary: List semantic layer versions
-      description: Retrieve all versions of your semantic layer
-      operationId: listSemanticLayers
-      tags:
-        - Semantic Layer
-      parameters:
-        - name: page
-          in: query
-          description: Page number for pagination
-          required: false
-          schema:
-            type: integer
-            default: 1
-            minimum: 1
-        - name: limit
-          in: query
-          description: Number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 20
-            maximum: 100
-      responses:
-        '200':
-          description: List of semantic layer versions
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SemanticLayerList'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /semantic-layers/current:
-    get:
-      summary: Get current semantic layer
-      description: Retrieve the currently active semantic layer
-      operationId: getCurrentSemanticLayer
-      tags:
-        - Semantic Layer
-      responses:
-        '200':
-          description: Current semantic layer
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SemanticLayer'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-
-  /semantic-layers/test:
-    post:
-      summary: Test semantic layer
-      description: |
-        Test your semantic layer with sample questions to ensure it correctly 
-        interprets natural language queries and generates appropriate SQL.
-      operationId: testSemanticLayer
-      tags:
-        - Semantic Layer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TestSemanticLayerRequest'
-      responses:
-        '200':
-          description: Test results
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TestSemanticLayerResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
   # Connection Management
   /connections:
     get:
@@ -288,6 +135,819 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SchemaAnalysis'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /connections/{connection_id}/generate:
+    post:
+      summary: Generate semantic layer from schema
+      description: |
+        Automatically generate a semantic layer by analyzing your database schema. 
+        Uses AI to identify entities, relationships, and suggest meaningful metrics based on your data structure.
+      operationId: generateSemanticLayer
+      tags:
+        - Connections
+      parameters:
+        - name: connection_id
+          in: path
+          required: true
+          description: Database connection ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateSemanticLayerRequest'
+            examples:
+              basic:
+                summary: Basic generation
+                value:
+                  options:
+                    auto_discover_metrics: true
+                    include_common_filters: true
+              with_hints:
+                summary: Generation with business context
+                value:
+                  options:
+                    auto_discover_metrics: true
+                    include_common_filters: true
+                    industry: "e-commerce"
+                    key_metrics: ["revenue", "customer_retention"]
+      responses:
+        '201':
+          description: Semantic layer generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateSemanticLayerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Semantic Layer - Entities
+  /semantic/entities:
+    post:
+      summary: Create entity
+      description: Create a new entity in the semantic layer
+      operationId: createEntity
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+      responses:
+        '201':
+          description: Entity created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    get:
+      summary: List entities
+      description: Retrieve all entities in the semantic layer
+      operationId: listEntities
+      tags:
+        - Semantic Layer
+      responses:
+        '200':
+          description: List of entities
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EntityResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /semantic/entities/{entity_id}:
+    get:
+      summary: Get entity
+      description: Retrieve a specific entity by ID
+      operationId: getEntity
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: entity_id
+          in: path
+          required: true
+          description: Entity ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Entity details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update entity
+      description: Update an existing entity
+      operationId: updateEntity
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: entity_id
+          in: path
+          required: true
+          description: Entity ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+      responses:
+        '200':
+          description: Entity updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete entity
+      description: Delete an entity from the semantic layer
+      operationId: deleteEntity
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: entity_id
+          in: path
+          required: true
+          description: Entity ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Entity deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Semantic Layer - Relationships
+  /semantic/relationships:
+    post:
+      summary: Create relationship
+      description: Create a new relationship between entities
+      operationId: createRelationship
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Relationship'
+      responses:
+        '201':
+          description: Relationship created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RelationshipResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    get:
+      summary: List relationships
+      description: Retrieve all relationships in the semantic layer
+      operationId: listRelationships
+      tags:
+        - Semantic Layer
+      responses:
+        '200':
+          description: List of relationships
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relationships:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RelationshipResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /semantic/relationships/{relationship_id}:
+    get:
+      summary: Get relationship
+      description: Retrieve a specific relationship by ID
+      operationId: getRelationship
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: relationship_id
+          in: path
+          required: true
+          description: Relationship ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Relationship details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RelationshipResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update relationship
+      description: Update an existing relationship
+      operationId: updateRelationship
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: relationship_id
+          in: path
+          required: true
+          description: Relationship ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Relationship'
+      responses:
+        '200':
+          description: Relationship updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RelationshipResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete relationship
+      description: Delete a relationship from the semantic layer
+      operationId: deleteRelationship
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: relationship_id
+          in: path
+          required: true
+          description: Relationship ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Relationship deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Semantic Layer - Filters
+  /semantic/filters:
+    post:
+      summary: Create filter
+      description: Create a new filter in the semantic layer
+      operationId: createFilter
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filter'
+      responses:
+        '201':
+          description: Filter created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    get:
+      summary: List filters
+      description: Retrieve all filters in the semantic layer
+      operationId: listFilters
+      tags:
+        - Semantic Layer
+      responses:
+        '200':
+          description: List of filters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filters:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FilterResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /semantic/filters/{filter_id}:
+    get:
+      summary: Get filter
+      description: Retrieve a specific filter by ID
+      operationId: getFilter
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: filter_id
+          in: path
+          required: true
+          description: Filter ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Filter details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update filter
+      description: Update an existing filter
+      operationId: updateFilter
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: filter_id
+          in: path
+          required: true
+          description: Filter ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filter'
+      responses:
+        '200':
+          description: Filter updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete filter
+      description: Delete a filter from the semantic layer
+      operationId: deleteFilter
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: filter_id
+          in: path
+          required: true
+          description: Filter ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Filter deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Semantic Layer - Dimensions
+  /semantic/dimensions:
+    post:
+      summary: Create dimension
+      description: Create a new dimension in the semantic layer
+      operationId: createDimension
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dimension'
+      responses:
+        '201':
+          description: Dimension created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DimensionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    get:
+      summary: List dimensions
+      description: Retrieve all dimensions in the semantic layer
+      operationId: listDimensions
+      tags:
+        - Semantic Layer
+      responses:
+        '200':
+          description: List of dimensions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dimensions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DimensionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /semantic/dimensions/{dimension_id}:
+    get:
+      summary: Get dimension
+      description: Retrieve a specific dimension by ID
+      operationId: getDimension
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: dimension_id
+          in: path
+          required: true
+          description: Dimension ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Dimension details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DimensionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update dimension
+      description: Update an existing dimension
+      operationId: updateDimension
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: dimension_id
+          in: path
+          required: true
+          description: Dimension ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dimension'
+      responses:
+        '200':
+          description: Dimension updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DimensionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete dimension
+      description: Delete a dimension from the semantic layer
+      operationId: deleteDimension
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: dimension_id
+          in: path
+          required: true
+          description: Dimension ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Dimension deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Semantic Layer - Measures
+  /semantic/measures:
+    post:
+      summary: Create measure
+      description: Create a new measure in the semantic layer
+      operationId: createMeasure
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Measure'
+      responses:
+        '201':
+          description: Measure created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeasureResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    get:
+      summary: List measures
+      description: Retrieve all measures in the semantic layer
+      operationId: listMeasures
+      tags:
+        - Semantic Layer
+      responses:
+        '200':
+          description: List of measures
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  measures:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MeasureResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /semantic/measures/{measure_id}:
+    get:
+      summary: Get measure
+      description: Retrieve a specific measure by ID
+      operationId: getMeasure
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: measure_id
+          in: path
+          required: true
+          description: Measure ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Measure details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeasureResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update measure
+      description: Update an existing measure
+      operationId: updateMeasure
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: measure_id
+          in: path
+          required: true
+          description: Measure ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Measure'
+      responses:
+        '200':
+          description: Measure updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeasureResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete measure
+      description: Delete a measure from the semantic layer
+      operationId: deleteMeasure
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: measure_id
+          in: path
+          required: true
+          description: Measure ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Measure deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Semantic Layer - Metrics
+  /semantic/metrics:
+    post:
+      summary: Create metric
+      description: Create a new metric in the semantic layer
+      operationId: createMetric
+      tags:
+        - Semantic Layer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Metric'
+      responses:
+        '201':
+          description: Metric created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    get:
+      summary: List metrics
+      description: Retrieve all metrics in the semantic layer
+      operationId: listMetrics
+      tags:
+        - Semantic Layer
+      responses:
+        '200':
+          description: List of metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MetricResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /semantic/metrics/{metric_id}:
+    get:
+      summary: Get metric
+      description: Retrieve a specific metric by ID
+      operationId: getMetric
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: metric_id
+          in: path
+          required: true
+          description: Metric ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Metric details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      summary: Update metric
+      description: Update an existing metric
+      operationId: updateMetric
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: metric_id
+          in: path
+          required: true
+          description: Metric ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Metric'
+      responses:
+        '200':
+          description: Metric updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      summary: Delete metric
+      description: Delete a metric from the semantic layer
+      operationId: deleteMetric
+      tags:
+        - Semantic Layer
+      parameters:
+        - name: metric_id
+          in: path
+          required: true
+          description: Metric ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Metric deleted successfully
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -853,98 +1513,6 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # Analytics Endpoints
-  /analytics/semantic-usage:
-    get:
-      summary: Get semantic layer usage statistics
-      description: |
-        Analyze how your semantic layer is being used. Helps identify popular metrics,
-        unused objects, and common question patterns to improve your semantic model.
-      operationId: getSemanticUsage
-      tags:
-        - Analytics
-      parameters:
-        - name: start_date
-          in: query
-          description: Start date for analysis period (ISO 8601)
-          required: true
-          schema:
-            type: string
-            format: date
-            example: "2024-01-01"
-        - name: end_date
-          in: query
-          description: End date for analysis period (ISO 8601)
-          required: true
-          schema:
-            type: string
-            format: date
-            example: "2024-01-31"
-        - name: group_by
-          in: query
-          description: Time grouping for metrics
-          required: false
-          schema:
-            type: string
-            enum: ["day", "week", "month"]
-            default: "day"
-      responses:
-        '200':
-          description: Semantic usage statistics
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SemanticUsageStats'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /analytics/failed-queries:
-    get:
-      summary: Get failed queries
-      description: |
-        Retrieve queries that failed to execute or returned no results. 
-        Use this to identify gaps in your semantic layer and improve coverage.
-      operationId: getFailedQueries
-      tags:
-        - Analytics
-      parameters:
-        - name: start_date
-          in: query
-          description: Start date for analysis period (ISO 8601)
-          required: true
-          schema:
-            type: string
-            format: date
-        - name: end_date
-          in: query
-          description: End date for analysis period (ISO 8601)
-          required: true
-          schema:
-            type: string
-            format: date
-        - name: limit
-          in: query
-          description: Maximum number of failed queries to return
-          required: false
-          schema:
-            type: integer
-            default: 50
-            minimum: 1
-            maximum: 200
-      responses:
-        '200':
-          description: Failed query analysis
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FailedQueries'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -1154,13 +1722,7 @@ components:
 
     GenerateSemanticLayerRequest:
       type: object
-      required:
-        - connection_id
       properties:
-        connection_id:
-          type: string
-          description: Database connection to analyze
-          example: "conn_123"
         options:
           type: object
           properties:
@@ -1310,79 +1872,209 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
 
-    TestSemanticLayerRequest:
+    # Semantic Layer Response Schemas
+    EntityResponse:
       type: object
-      required:
-        - test_questions
       properties:
-        semantic_layer_id:
+        id:
           type: string
-          description: ID of semantic layer to test (uses current if not specified)
-          example: "sl_789"
-        semantic_layer:
-          $ref: '#/components/schemas/SemanticLayerDefinition'
-          description: Inline semantic layer definition (alternative to ID)
-        test_questions:
-          type: array
-          items:
-            type: string
-          minItems: 1
-          maxItems: 20
-          example: 
-            - "What's our revenue this month?"
-            - "Show me top customers by order count"
-            - "What's the average order value by product category?"
-        include_sql:
-          type: boolean
-          default: true
-          description: Include generated SQL in results
+          description: Unique identifier for the entity
+          example: "entity_123"
+        name:
+          type: string
+          description: Business-friendly name for the entity
+          example: "customer"
+        source_table:
+          type: string
+          description: Database table name
+          example: "users"
+        identifier:
+          type: string
+          description: Primary key column
+          example: "user_id"
+        temporal_key:
+          type: string
+          description: Optional timestamp column for event entities
+          example: "created_at"
+        description:
+          type: string
+          description: Human-readable description
+          example: "Customer master data"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
-    TestSemanticLayerResponse:
+    RelationshipResponse:
       type: object
       properties:
-        results:
+        id:
+          type: string
+          description: Unique identifier for the relationship
+          example: "rel_456"
+        name:
+          type: string
+          example: "customer_placed_order"
+        from_entity:
+          type: string
+          example: "customer"
+        to_entity:
+          type: string
+          example: "order"
+        join_keys:
+          type: object
+          properties:
+            from:
+              type: string
+              example: "user_id"
+            to:
+              type: string
+              example: "customer_id"
+        cardinality:
+          type: string
+          enum: ["one_to_one", "one_to_many", "many_to_many"]
+          example: "one_to_many"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    FilterResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the filter
+          example: "filter_789"
+        name:
+          type: string
+          example: "completed_orders"
+        entity:
+          type: string
+          example: "order"
+        condition:
+          type: string
+          description: SQL condition
+          example: "status = 'completed'"
+        parameters:
           type: array
           items:
             type: object
             properties:
-              question:
+              name:
                 type: string
-              status:
+              type:
                 type: string
-                enum: ["success", "partial_success", "failure"]
-              semantic_objects_used:
-                type: array
-                items:
-                  type: string
-                example: ["metric.revenue", "filter.current_month", "dimension.product_category"]
-              generated_sql:
+                enum: ["string", "number", "date", "boolean"]
+              default:
                 type: string
-                example: "SELECT SUM(order_total) as revenue FROM orders WHERE..."
-              execution_time_ms:
-                type: number
-                example: 45
-              error:
-                type: string
-                description: Error message if status is failure
-              suggestions:
-                type: array
-                items:
-                  type: string
-                description: Suggestions for missing semantic objects
-                example: ["Consider adding a 'current_month' filter for time-based queries"]
-        summary:
-          type: object
-          properties:
-            total_tests:
-              type: integer
-            successful:
-              type: integer
-            failed:
-              type: integer
-            coverage_percentage:
-              type: number
-              description: Percentage of semantic objects used in tests
-              example: 75.5
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    DimensionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the dimension
+          example: "dim_101"
+        name:
+          type: string
+          example: "customer_segment"
+        entity:
+          type: string
+          example: "customer"
+        expression:
+          type: string
+          description: SQL expression
+          example: "CASE WHEN lifetime_value > 1000 THEN 'high_value' ELSE 'standard' END"
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    MeasureResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the measure
+          example: "measure_202"
+        name:
+          type: string
+          example: "revenue"
+        expression:
+          type: string
+          example: "SUM(order_total)"
+        aggregation:
+          type: string
+          enum: ["sum", "count", "avg", "min", "max"]
+        entity:
+          type: string
+          example: "order"
+        default_filters:
+          type: array
+          items:
+            type: string
+          example: ["completed_orders"]
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    MetricResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the metric
+          example: "metric_303"
+        name:
+          type: string
+          example: "average_order_value"
+        formula:
+          type: string
+          description: Expression using measures
+          example: "revenue / order_count"
+        required_filters:
+          type: array
+          items:
+            type: string
+        recommended_filters:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        example_questions:
+          type: array
+          items:
+            type: string
+          example: ["What's our average order value?", "How has AOV changed over time?"]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
     # Connection Schemas
     Connection:
@@ -1996,135 +2688,6 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
 
-    # Analytics Schemas
-    SemanticUsageStats:
-      type: object
-      properties:
-        period:
-          type: object
-          properties:
-            start:
-              type: string
-              format: date
-            end:
-              type: string
-              format: date
-        usage:
-          type: object
-          properties:
-            total_questions:
-              type: integer
-              example: 1523
-            unique_users:
-              type: integer
-              example: 47
-            unique_clients:
-              type: integer
-              example: 12
-            avg_response_time_ms:
-              type: number
-              example: 312
-        popular_metrics:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              usage_count:
-                type: integer
-              percentage_of_queries:
-                type: number
-        popular_dimensions:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              usage_count:
-                type: integer
-        unused_objects:
-          type: array
-          description: Semantic objects that haven't been used
-          items:
-            type: object
-            properties:
-              type:
-                type: string
-                enum: ["entity", "metric", "dimension", "filter"]
-              name:
-                type: string
-              last_used:
-                type: string
-                format: date-time
-                nullable: true
-        common_question_patterns:
-          type: array
-          items:
-            type: object
-            properties:
-              pattern:
-                type: string
-                example: "revenue by {dimension}"
-              count:
-                type: integer
-              example_questions:
-                type: array
-                items:
-                  type: string
-
-    FailedQueries:
-      type: object
-      properties:
-        failed_queries:
-          type: array
-          items:
-            type: object
-            properties:
-              question:
-                type: string
-                example: "What's our churn rate?"
-              error:
-                type: string
-                example: "No metric found for 'churn rate'"
-              error_type:
-                type: string
-                enum: ["missing_semantic_object", "invalid_syntax", "permission_denied", "execution_error"]
-              timestamp:
-                type: string
-                format: date-time
-              client_id:
-                type: string
-              user_id:
-                type: string
-              suggested_fix:
-                type: object
-                description: AI-suggested solution
-                properties:
-                  type:
-                    type: string
-                    enum: ["add_metric", "add_dimension", "add_filter", "modify_existing"]
-                  suggestion:
-                    type: object
-                    example:
-                      name: "churn_rate"
-                      formula: "customers_lost / customers_start_of_period"
-                      description: "Percentage of customers who stopped using the service"
-        summary:
-          type: object
-          properties:
-            total_failed:
-              type: integer
-            by_error_type:
-              type: object
-              additionalProperties:
-                type: integer
-            most_common_missing_concepts:
-              type: array
-              items:
-                type: string
-
     # Common Schemas
     Pagination:
       type: object
@@ -2262,8 +2825,6 @@ tags:
     description: Natural language question processing and answer generation
   - name: Chain Management
     description: Operations for managing conversation chains
-  - name: Analytics
-    description: Usage analytics and query performance insights
   - name: Admin - Client Management
     description: Operations for managing clients
   - name: Admin - User Management

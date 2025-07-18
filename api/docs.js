@@ -310,7 +310,7 @@ export default function handler(req, res) {
                             color: '#1e293b'
                         },
                         headings: {
-                            fontFamily: 'Cormorant Garamond, serif',
+                            fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                             fontWeight: '600',
                             lineHeight: '1.4'
                         },
