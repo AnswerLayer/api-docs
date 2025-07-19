@@ -154,7 +154,7 @@ Enable natural language queries for your users. They ask questions, get SQL resu
 - **[Help Center](https://getanswerlayer.com/help)** - Documentation and guides
 - **[API Status](https://status.getanswerlayer.com)** - Real-time API status  
 - **[Developer Community](https://community.getanswerlayer.com)** - Connect with other developers
-- **[Email Support](mailto:support@getanswerlayer.com)** - Direct technical support
+- **[Email Support](mailto:josh@getanswerlayer.com)** - Direct technical support
 
 ## 🔧 Enterprise Features
 
