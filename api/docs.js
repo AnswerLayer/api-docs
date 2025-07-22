@@ -6,8 +6,8 @@ export default function handler(req, res) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Primary Meta Tags -->
-    <title>AnswerLayer Public API Documentation - Conversational Analytics Platform</title>
-    <meta name="title" content="AnswerLayer Public API Documentation - Conversational Analytics Platform">
+    <title>AnswerLayer Agent API Documentation - Conversational Analytics Platform</title>
+    <meta name="title" content="AnswerLayer Agent API Documentation - Conversational Analytics Platform">
     <meta name="description" content="Complete API documentation for AnswerLayer's conversational analytics platform. Embed natural language querying, semantic layers, and business intelligence into your applications with our REST API.">
     <meta name="keywords" content="API documentation, conversational analytics, natural language query API, semantic layer API, business intelligence API, embedded analytics, database API, PII detection API, REST API, developer documentation">
     <meta name="author" content="AnswerLayer">
@@ -25,7 +25,7 @@ export default function handler(req, res) {
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="AnswerLayer">
     <meta property="og:url" content="https://docs.getanswerlayer.com/">
-    <meta property="og:title" content="AnswerLayer Public API Documentation - Conversational Analytics Platform">
+    <meta property="og:title" content="AnswerLayer Agent API Documentation - Conversational Analytics Platform">
     <meta property="og:description" content="Complete API documentation for AnswerLayer's conversational analytics platform. Embed natural language querying, semantic layers, and business intelligence into your applications.">
     <meta property="og:image" content="https://getanswerlayer.com/og-image.jpg">
     <meta property="og:image:width" content="1200">
@@ -38,7 +38,7 @@ export default function handler(req, res) {
     <meta property="twitter:site" content="@getanswerlayer">
     <meta property="twitter:creator" content="@getanswerlayer">
     <meta property="twitter:url" content="https://docs.getanswerlayer.com/">
-    <meta property="twitter:title" content="AnswerLayer Public API Documentation">
+    <meta property="twitter:title" content="AnswerLayer Agent API Documentation">
     <meta property="twitter:description" content="REST API for embedding conversational analytics, natural language querying, and business intelligence into your applications.">
     <meta property="twitter:image" content="https://getanswerlayer.com/og-image.jpg">
     <meta property="twitter:image:alt" content="AnswerLayer API Documentation">
@@ -58,7 +58,7 @@ export default function handler(req, res) {
     {
       "@context": "https://schema.org",
       "@type": ["TechArticle", "APIReference"],
-      "headline": "AnswerLayer Public API Documentation - Conversational Analytics Platform",
+      "headline": "AnswerLayer Agent API Documentation - Conversational Analytics Platform",
       "description": "Complete REST API documentation for AnswerLayer's conversational analytics platform. Embed natural language querying, semantic layers, and business intelligence into your applications.",
       "image": "https://getanswerlayer.com/og-image.jpg",
       "author": {
@@ -119,7 +119,7 @@ export default function handler(req, res) {
     {
       "@context": "https://schema.org",
       "@type": "APIReference",
-      "name": "AnswerLayer Public API",
+      "name": "AnswerLayer Agent API",
       "description": "REST API for conversational analytics, natural language querying, and embedded business intelligence",
       "url": "https://docs.getanswerlayer.com/",
       "version": "Alpha",
@@ -170,7 +170,7 @@ export default function handler(req, res) {
     {
       "@context": "https://schema.org",
       "@type": "SoftwareSourceCode",
-      "name": "AnswerLayer Public API",
+      "name": "AnswerLayer Agent API",
       "description": "REST API client libraries and documentation for AnswerLayer's conversational analytics platform",
       "programmingLanguage": ["JavaScript", "Python", "cURL"],
       "runtimePlatform": "Web API",
@@ -422,7 +422,7 @@ export default function handler(req, res) {
         <div class="header-content">
             <div class="logo-section">
                 <div itemscope itemtype="https://schema.org/Organization">
-                    <h1 itemprop="name">AnswerLayer Public API</h1>
+                    <h1 itemprop="name">AnswerLayer Agent API</h1>
                     <p itemprop="description">Conversational Analytics Platform</p>
                     <meta itemprop="url" content="https://getanswerlayer.com">
                     <meta itemprop="logo" content="https://getanswerlayer.com/logo.png">

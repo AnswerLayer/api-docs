@@ -1,4 +1,4 @@
-# AnswerLayer Public API
+# AnswerLayer Agent API
 
 **Embed conversational analytics into your products**
 

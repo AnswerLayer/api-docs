@@ -1,7 +1,7 @@
 {
   "name": "answerlayer-public-api-docs",
   "version": "1.0.0",
-  "description": "Public API documentation for AnswerLayer - Conversational Analytics Platform",
+  "description": "Agent API documentation for AnswerLayer - Conversational Analytics Platform",
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel --prod"
