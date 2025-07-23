@@ -1,4 +1,5 @@
 export default function handler(req, res) {
+  const posthogKey = process.env.VITE_POSTHOG_KEY || '';
   const html = `<!DOCTYPE html>
 <html lang="en" itemscope itemtype="https://schema.org/TechArticle">
 <head>
@@ -576,7 +577,7 @@ export default function handler(req, res) {
             // PostHog initialization
             const initializePostHog = () => {
                 // Environment variables injected from Vercel serverless function
-                const posthogKey = '${process.env.VITE_POSTHOG_KEY || ''}';
+                const posthogKey = '${posthogKey}';
                 const posthogHost = 'https://us.i.posthog.com';
                 
                 if (!posthogKey) {
@@ -587,6 +588,13 @@ export default function handler(req, res) {
                 // Skip PostHog initialization on localhost unless explicitly enabled
                 if (isLocalhost()) {
                     console.log('[PostHog] Disabled on localhost environment');
+                    return;
+                }
+
+                // Check if PostHog is loaded
+                if (typeof posthog === 'undefined') {
+                    console.log('[PostHog] Library not loaded yet, retrying...');
+                    setTimeout(initializePostHog, 100);
                     return;
                 }
 
