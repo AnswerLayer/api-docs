@@ -562,19 +562,25 @@ export default function handler(req, res) {
     </footer>
 
     <script src="https://unpkg.com/redoc@2.1.3/bundles/redoc.standalone.js"></script>
-    <script src="https://unpkg.com/posthog-js@1.255.1/dist/posthog.min.js"></script>
+    <script src="https://app.posthog.com/static/array.js"></script>
     <!-- Simple Analytics -->
     <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
     <script>
         // Analytics initialization and utilities
         (function() {
+            // Track page start time for performance metrics
+            const pageStartTime = Date.now();
+            
             // Check if we're on localhost
             const isLocalhost = () => {
                 const hostname = window.location.hostname;
                 return hostname === 'localhost' || hostname === '127.0.0.1';
             };
 
-            // PostHog initialization
+            // PostHog initialization with retry counter
+            let initRetryCount = 0;
+            const maxRetries = 50; // Max 5 seconds of retries
+            
             const initializePostHog = () => {
                 // Environment variables injected from Vercel serverless function
                 const posthogKey = '${posthogKey}';
@@ -593,7 +599,12 @@ export default function handler(req, res) {
 
                 // Check if PostHog is loaded
                 if (typeof posthog === 'undefined') {
-                    console.log('[PostHog] Library not loaded yet, retrying...');
+                    initRetryCount++;
+                    if (initRetryCount >= maxRetries) {
+                        console.error('[PostHog] Failed to load after maximum retries, giving up');
+                        return;
+                    }
+                    console.log('[PostHog] Library not loaded yet, retrying... (' + initRetryCount + '/' + maxRetries + ')');
                     setTimeout(initializePostHog, 100);
                     return;
                 }
