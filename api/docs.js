@@ -794,7 +794,6 @@ export default function handler(req, res) {
             });
 
             // Track time spent on page
-            let pageStartTime = Date.now();
             window.addEventListener('beforeunload', () => {
                 const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
                 window.analytics.track('api_docs_session_end', {
